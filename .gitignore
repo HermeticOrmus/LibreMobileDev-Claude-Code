@@ -1,0 +1,87 @@
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.xcworkspace
+*.xcuserdata
+
+# Android
+*.apk
+*.aab
+*.dex
+*.class
+.gradle/
+build/
+local.properties
+*.hprof
+captures/
+.externalNativeBuild/
+.cxx/
+
+# iOS
+*.ipa
+*.dSYM.zip
+*.dSYM
+Pods/
+Podfile.lock
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.moved-aside
+*.hmap
+*.ipa
+*.xccheckout
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+pubspec.lock
+
+# React Native
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.expo/
+__generated__/
+ios/Pods/
+android/app/build/
+
+# Environment
+.env
+.env.*
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+*.provisionprofile
+google-services.json
+GoogleService-Info.plist
+
+# Build artifacts
+dist/
+out/
+*.map
+
+# Logs
+logs/
+*.log
+hooks/logs/*.log
