@@ -1,46 +1,54 @@
-# Mobile Ci Cd
+# Mobile CI/CD
 
-Fastlane, Bitrise, App Center, code signing
+Fastlane, GitHub Actions, code signing (iOS match, Android keystore), TestFlight, Firebase App Distribution, Google Play.
 
 ## What's Included
 
 ### Agents
-- **Mobile Cicd Engineer** - Specialized agent for Fastlane, Bitrise, App Center, code signing
+- **mobile-cicd-engineer** - Expert in Fastlane lanes, match for certificate management, App Store Connect API, GitHub Actions matrix builds, build number automation
 
 ### Commands
-- `/mobile-cicd` - Quick-access command for mobile-ci-cd workflows
+- `/mobile-cicd` - Set up Fastlane, configure signing, build distribution lanes, create CI workflows
 
 ### Skills
-- **Mobile Cicd Patterns** - Pattern library and knowledge base for mobile-ci-cd
+- **mobile-cicd-patterns** - iOS Fastfile with match, Android Fastfile with Gradle signing, GitHub Actions matrix YAML, required secrets table
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Full iOS + Android CI pipeline
+/mobile-cicd setup --both --ci github-actions
 
-## Usage Examples
+# iOS code signing with match
+/mobile-cicd sign --ios
 
-```
-# Use the command directly
-/mobile-cicd analyze
-
-# Use the command with specific input
-/mobile-cicd generate --context "your project"
-
-# Reference patterns from the skill
-"Apply mobile-cicd-patterns patterns to this implementation"
+# TestFlight beta on every main push
+/mobile-cicd distribute --ios --distribution testflight
 ```
 
-## Key Patterns
+## Required Secrets
 
-- Follow established conventions for mobile-ci-cd
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+### iOS
+| Secret | Description |
+|--------|-------------|
+| `APP_STORE_KEY_ID` | App Store Connect API key ID |
+| `APP_STORE_ISSUER_ID` | App Store Connect issuer ID |
+| `APP_STORE_KEY_CONTENT` | .p8 key content (base64) |
+| `MATCH_PASSWORD` | match repo encryption password |
+| `MATCH_GIT_BASIC_AUTHORIZATION` | base64 `user:token` |
 
-## Related Plugins
+### Android
+| Secret | Description |
+|--------|-------------|
+| `KEYSTORE_BASE64` | Base64-encoded keystore file |
+| `KEYSTORE_PASSWORD` | Keystore password |
+| `KEY_ALIAS` | Signing key alias |
+| `KEY_PASSWORD` | Key password |
+| `PLAY_STORE_JSON_KEY` | Google Play service account JSON |
 
-Check the main README for related plugins in this collection.
+## Key Rules
+
+- `match(readonly: true)` in CI — never regenerate certs in automated pipelines
+- Keystore files must never be committed to the repo — always decode from env
+- Build numbers from `${{ github.run_number }}` for monotonically increasing values
+- Cache Gradle dependencies and Ruby gems — saves 3-5 minutes per build run

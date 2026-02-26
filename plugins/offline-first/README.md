@@ -1,46 +1,58 @@
 # Offline First
 
-Local databases, sync strategies, conflict resolution
+Core Data, Room, Drift, background sync with BGTaskScheduler/WorkManager, conflict resolution strategies.
 
 ## What's Included
 
 ### Agents
-- **Offline Architect** - Specialized agent for Local databases, sync strategies, conflict resolution
+- **offline-architect** - Expert in local database design, sync queue patterns, LWW/CRDT conflict resolution, Core Data, Room, Drift, and network state management
 
 ### Commands
-- `/offline` - Quick-access command for offline-first workflows
+- `/offline` - Design offline layers: `design`, `sync`, `conflict`, `test`
 
 ### Skills
-- **Offline First Patterns** - Pattern library and knowledge base for offline-first
+- **offline-first-patterns** - Room Entity with syncStatus, CoroutineWorker SyncWorker with retry, Core Data background context pattern, Drift table with sync metadata, Repository write-local-first, conflict resolution matrix, Flutter connectivity_plus sync trigger
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Android offline stack
+/offline design --android
 
-## Usage Examples
+# iOS Core Data with background sync
+/offline sync --ios
 
-```
-# Use the command directly
-/offline analyze
+# Last-write-wins conflict resolution
+/offline conflict --strategy lww
 
-# Use the command with specific input
-/offline generate --context "your project"
-
-# Reference patterns from the skill
-"Apply offline-first-patterns patterns to this implementation"
+# Flutter Drift offline data layer
+/offline design --flutter
 ```
 
-## Key Patterns
+## Sync Metadata Schema
 
-- Follow established conventions for offline-first
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+Every synced table needs these columns:
 
-## Related Plugins
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID (String) | Client-generated stable ID |
+| `updatedAt` | Int (epoch ms) | Used for LWW conflict resolution |
+| `syncStatus` | Enum | pending / synced / failed |
+| `deletedAt` | Int? (epoch ms) | Soft delete — never hard-delete synced rows |
 
-Check the main README for related plugins in this collection.
+## Background Sync by Platform
+
+| Platform | API | Constraints |
+|----------|-----|-------------|
+| iOS | `BGProcessingTask` | requiresNetworkConnectivity, requiresExternalPower |
+| iOS | `BGAppRefreshTask` | < 30 second budget |
+| Android | WorkManager `PeriodicWorkRequest` | NetworkType.CONNECTED |
+| Flutter | workmanager package | wraps platform APIs |
+
+## Critical Rules
+
+- Never use auto-increment integers as IDs for synced data — use UUIDs generated client-side
+- Always soft-delete synced records — `deletedAt` timestamp, not SQL DELETE
+- Write to local DB first, always — network availability must never block user action
+- Buffer all writes in the pending queue; flush FIFO on reconnect
+- Core Data: always write on background context, never on `viewContext`

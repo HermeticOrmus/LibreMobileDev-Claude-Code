@@ -1,87 +1,70 @@
 # /gestures
 
-A quick-access command for gesture-interaction workflows in Claude Code.
+Implement gesture recognizers, haptic feedback, velocity tracking, and custom gesture recognizers.
 
 ## Trigger
 
 `/gestures [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing gesture-interaction implementation
-- `generate` - Generate new gesture-interaction artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for gesture-interaction artifacts
+- `detect` - Implement a standard gesture (tap, swipe, pinch, rotate, long-press)
+- `custom` - Build a custom gesture recognizer for a non-standard interaction
+- `haptic` - Add haptic feedback at correct timing points
+- `test` - Generate gesture testing checklist
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - UIGestureRecognizer / SwiftUI gestures
+- `--android` - GestureDetector / Compose pointerInput
+- `--flutter` - GestureDetector / Listener
+- `--gesture <type>` - swipe, pinch, rotate, long-press, tap, pan
+- `--velocity` - Include velocity tracking and fling physics
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of gesture-interaction artifacts
-- Determine applicable standards and conventions
+### detect
+1. Identify gesture type and required data (translation, velocity, scale, angle)
+2. Select appropriate recognizer class
+3. Output recognizer setup + handler with state machine (began/changed/ended/cancelled)
+4. Add conflict resolution if multiple recognizers on same view
 
-### Step 2: Analysis
-- Evaluate against gesture-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### custom
+1. Describe the gesture pattern (shape, touch count, sequence)
+2. Subclass UIGestureRecognizer (iOS) or implement GestureRecognizer (Flutter)
+3. Override touchesBegan/Moved/Ended methods with recognition logic
+4. Output the state transitions that trigger `.ended` vs `.failed`
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### haptic
+Output haptic feedback added to gesture handler at correct timing:
+- iOS: `UIImpactFeedbackGenerator.prepare()` before interaction, `.impactOccurred()` at trigger point
+- Android: `view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)`
+- Flutter: `HapticFeedback.mediumImpact()` at trigger point
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
-
-## Output
-
-### Success
-```
-## Gesture Interaction - [Action] Complete
-
-### Changes Made
-- [List of changes]
-
-### Validation
-- [Checks passed]
-
-### Next Steps
-- [Recommended follow-up actions]
-```
-
-### Error
-```
-## Gesture Interaction - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
-```
+### test
+Output checklist:
+- [ ] Gesture recognized on target element
+- [ ] Gesture does not trigger on scroll/other elements (conflict check)
+- [ ] Haptic fires at correct moment (not too early, not delayed)
+- [ ] Velocity-based fling works at both slow and fast swipe speeds
+- [ ] Cancelled gesture (incoming call, notification) handled gracefully
+- [ ] Accessibility alternative exists for every gesture
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/gestures analyze
+# Swipe-to-dismiss card (iOS)
+/gestures detect --ios --gesture swipe --velocity
 
-# Generate new artifacts
-/gestures generate --context ./src
+# Pinch-to-zoom image (Android Compose)
+/gestures detect --android --gesture pinch
 
-# Validate against best practices
-/gestures validate --verbose
+# Custom circular swipe recognizer (iOS)
+/gestures custom --ios
 
-# Generate documentation
-/gestures document --format markdown
+# Add haptics to Flutter drag interaction
+/gestures haptic --flutter
+
+# Gesture testing checklist for all platforms
+/gestures test
 ```

@@ -1,88 +1,251 @@
 # Payment Patterns
 
-A comprehensive pattern library and knowledge base for mobile-payments.
+## iOS StoreKit 2: Complete Subscription Flow
 
-## Knowledge Base
+```swift
+import StoreKit
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern mobile-payments
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for mobile-payments
+class StoreService: ObservableObject {
+    @Published var products: [Product] = []
+    @Published var isPremium: Bool = false
 
-### Architecture Principles
-- Separation of concerns within mobile-payments implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+    private var updateListenerTask: Task<Void, Error>? = nil
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+    init() {
+        updateListenerTask = listenForTransactions()
+        Task {
+            await loadProducts()
+            await checkEntitlements()
+        }
+    }
 
-## Patterns
+    deinit {
+        updateListenerTask?.cancel()
+    }
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+    // Listen for real-time transaction updates (renewals, revocations)
+    private func listenForTransactions() -> Task<Void, Error> {
+        Task.detached {
+            for await result in Transaction.updates {
+                if let transaction = try? result.payloadValue {
+                    await self.handle(transaction: transaction)
+                }
+            }
+        }
+    }
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+    @MainActor
+    func loadProducts() async {
+        do {
+            products = try await Product.products(for: ["com.myapp.premium.monthly",
+                                                         "com.myapp.premium.annual"])
+        } catch {
+            print("Failed to load products: \(error)")
+        }
+    }
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+    @MainActor
+    func purchase(_ product: Product) async throws {
+        let result = try await product.purchase()
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+        switch result {
+        case .success(let verificationResult):
+            guard case .verified(let transaction) = verificationResult else { return }
+            await handle(transaction: transaction)
+        case .userCancelled:
+            break
+        case .pending:
+            // Waiting for parental approval / SCA
+            break
+        @unknown default:
+            break
+        }
+    }
 
-## Anti-Patterns
+    @MainActor
+    func checkEntitlements() async {
+        for await result in Transaction.currentEntitlements {
+            if case .verified(let transaction) = result {
+                if transaction.revocationDate == nil {
+                    isPremium = true
+                    return
+                }
+            }
+        }
+        isPremium = false
+    }
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+    @MainActor
+    private func handle(transaction: Transaction) async {
+        // Deliver content
+        if transaction.revocationDate == nil {
+            isPremium = true
+        } else {
+            // Revoked — revoke access
+            isPremium = false
+        }
+        // Always finish the transaction
+        await transaction.finish()
+    }
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+    func restore() async throws {
+        try await AppStore.sync()
+        await checkEntitlements()
+    }
+}
+```
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+### StoreKit 2 Subscription Renewal State
+```swift
+func subscriptionStatus(for product: Product) async -> String {
+    guard let subscription = product.subscription else { return "Not a subscription" }
+    guard let status = try? await subscription.status.first else { return "Unknown" }
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+    return switch status.state {
+    case .subscribed:         "Active"
+    case .expired:            "Expired"
+    case .inBillingRetryPeriod: "Payment issue — retrying"
+    case .inGracePeriod:      "Grace period — update payment"
+    case .revoked:            "Revoked"
+    default:                  "Unknown"
+    }
+}
+```
 
-## References
+---
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+## Android: Google Play Billing Library
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+```kotlin
+class BillingManager(private val context: Context) {
+    private var billingClient: BillingClient? = null
+    private var productDetails: List<ProductDetails> = emptyList()
 
-### Tools
-- Development tools for mobile-payments
-- Testing and validation tools
-- Monitoring and observability tools
+    private val purchasesUpdatedListener = PurchasesUpdatedListener { billingResult, purchases ->
+        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
+            purchases.forEach { purchase ->
+                lifecycleScope.launch { handlePurchase(purchase) }
+            }
+        }
+    }
+
+    fun initialize() {
+        billingClient = BillingClient.newBuilder(context)
+            .setListener(purchasesUpdatedListener)
+            .enablePendingPurchases()
+            .build()
+
+        billingClient?.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(result: BillingResult) {
+                if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                    lifecycleScope.launch { queryProducts() }
+                    lifecycleScope.launch { checkExistingPurchases() }
+                }
+            }
+            override fun onBillingServiceDisconnected() { /* retry connection */ }
+        })
+    }
+
+    private suspend fun queryProducts() {
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(listOf(
+                QueryProductDetailsParams.Product.newBuilder()
+                    .setProductId("premium_monthly")
+                    .setProductType(BillingClient.ProductType.SUBS)
+                    .build()
+            ))
+            .build()
+
+        val result = billingClient?.queryProductDetails(params)
+        productDetails = result?.productDetailsList ?: emptyList()
+    }
+
+    fun launchPurchaseFlow(activity: Activity, productDetails: ProductDetails) {
+        val offerToken = productDetails.subscriptionOfferDetails?.firstOrNull()?.offerToken ?: return
+
+        val params = BillingFlowParams.newBuilder()
+            .setProductDetailsParamsList(listOf(
+                BillingFlowParams.ProductDetailsParams.newBuilder()
+                    .setProductDetails(productDetails)
+                    .setOfferToken(offerToken)
+                    .build()
+            ))
+            .build()
+
+        billingClient?.launchBillingFlow(activity, params)
+    }
+
+    private suspend fun handlePurchase(purchase: Purchase) {
+        if (purchase.purchaseState != Purchase.PurchaseState.PURCHASED) return
+
+        // Acknowledge REQUIRED within 3 days
+        if (!purchase.isAcknowledged) {
+            val params = AcknowledgePurchaseParams.newBuilder()
+                .setPurchaseToken(purchase.purchaseToken)
+                .build()
+
+            billingClient?.acknowledgePurchase(params)
+        }
+
+        // Unlock premium access
+        unlockPremium(purchase.purchaseToken)
+    }
+
+    private suspend fun checkExistingPurchases() {
+        val params = QueryPurchasesParams.newBuilder()
+            .setProductType(BillingClient.ProductType.SUBS)
+            .build()
+
+        val result = billingClient?.queryPurchasesAsync(params)
+        val activePurchases = result?.purchasesList?.filter {
+            it.purchaseState == Purchase.PurchaseState.PURCHASED
+        }
+
+        if (activePurchases?.isNotEmpty() == true) {
+            unlockPremium(activePurchases.first().purchaseToken)
+        }
+    }
+}
+```
+
+---
+
+## RevenueCat: Cross-Platform Subscriptions
+
+```swift
+// iOS — initialize in AppDelegate
+import RevenueCat
+
+Purchases.configure(withAPIKey: "appl_XXXXXXXX")
+Purchases.shared.delegate = self
+
+// Check entitlement on app launch
+func checkPremiumAccess() {
+    Purchases.shared.getCustomerInfo { customerInfo, error in
+        guard error == nil, let info = customerInfo else { return }
+        let isPremium = info.entitlements["premium"]?.isActive == true
+        // Update UI
+    }
+}
+
+// Purchase
+func purchasePackage(_ package: Package) {
+    Purchases.shared.purchase(package: package) { transaction, info, error, userCancelled in
+        guard !userCancelled, error == nil else { return }
+        let isPremium = info?.entitlements["premium"]?.isActive == true
+        // Update UI
+    }
+}
+```
+
+```kotlin
+// Android
+Purchases.configure(PurchasesConfiguration.Builder(context, "goog_XXXXXXXX").build())
+
+Purchases.sharedInstance.getCustomerInfo(object : ReceiveCustomerInfoCallback {
+    override fun onReceived(customerInfo: CustomerInfo) {
+        val isPremium = customerInfo.entitlements["premium"]?.isActive == true
+    }
+    override fun onError(error: PurchasesError) { }
+})
+```

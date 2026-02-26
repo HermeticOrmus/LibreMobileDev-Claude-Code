@@ -1,46 +1,43 @@
 # Deep Linking
 
-Universal links, app links, deferred deep links
+iOS Universal Links, Android App Links, custom URL schemes, deferred deep linking, in-app routing.
 
 ## What's Included
 
 ### Agents
-- **Deep Link Engineer** - Specialized agent for Universal links, app links, deferred deep links
+- **deep-link-engineer** - Expert in AASA files, assetlinks.json, intent-filters, Flutter go_router, Branch.io/Firebase deferred linking, link testing with adb and xcrun
 
 ### Commands
-- `/deep-link` - Quick-access command for deep-linking workflows
+- `/deep-link` - Configure server files, implement handling, test, and debug deep links
 
 ### Skills
-- **Deep Link Patterns** - Pattern library and knowledge base for deep-linking
+- **deep-link-patterns** - AASA JSON, assetlinks.json, iOS Swift handling, Android Kotlin handling, Flutter app_links + go_router, Branch.io deferred linking, adb/xcrun test commands
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Configure Universal Links and App Links for product pages
+/deep-link configure --ios --android --url "https://myapp.com/product/:id"
 
-## Usage Examples
+# Test your configured deep links
+/deep-link test --url "https://myapp.com/product/123"
 
-```
-# Use the command directly
-/deep-link analyze
-
-# Use the command with specific input
-/deep-link generate --context "your project"
-
-# Reference patterns from the skill
-"Apply deep-link-patterns patterns to this implementation"
+# Debug why Universal Links aren't working
+/deep-link debug --ios
 ```
 
-## Key Patterns
+## Server Files Required
 
-- Follow established conventions for deep-linking
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Platform | File | URL |
+|----------|------|-----|
+| iOS | apple-app-site-association | `https://domain/.well-known/apple-app-site-association` |
+| Android | assetlinks.json | `https://domain/.well-known/assetlinks.json` |
 
-## Related Plugins
+Both must be served over HTTPS, with no redirect, with correct Content-Type.
 
-Check the main README for related plugins in this collection.
+## Common Pitfalls
+
+- AASA file cached by Apple's CDN — changes may take up to 24h after app install
+- `android:autoVerify="true"` must be set; verify with `adb shell pm get-app-links`
+- Custom URL schemes are not verified — use Universal/App Links for auth flows
+- AASA TeamID format: `TEAMID.com.bundle.id` (not just bundle ID)

@@ -1,87 +1,93 @@
 # /ios
 
-A quick-access command for swift-ios workflows in Claude Code.
+Build Swift/SwiftUI iOS features using modern APIs: async/await, actors, SwiftUI Layout, Combine, SwiftData.
 
 ## Trigger
 
 `/ios [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing swift-ios implementation
-- `generate` - Generate new swift-ios artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for swift-ios artifacts
+- `swiftui` - SwiftUI view, layout, navigation, animations
+- `concurrency` - async/await, actors, AsyncStream, structured concurrency
+- `combine` - Combine publisher pipelines for reactive data flow
+- `build` - SPM dependencies, Xcode build settings, code signing
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios16` - iOS 16 target (NavigationStack, Layout protocol)
+- `--ios17` - iOS 17 target (@Observable, SwiftData, PhaseAnimator)
+- `--ios18` - iOS 18 target (zoom transitions, RealityKit updates)
+- `--uikit` - Include UIViewRepresentable bridge code
+- `--combine` - Combine-based reactive pattern (vs async/await)
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of swift-ios artifacts
-- Determine applicable standards and conventions
+### swiftui
+1. Identify SwiftUI equivalent for the UIKit pattern (if migrating)
+2. Choose property wrapper: `@State` local, `@Binding` parent-owned, `@StateObject` lifecycle-bound
+3. iOS 17+: `@Observable` class replaces `@ObservableObject` — simpler, more performant
+4. Navigation: `NavigationStack` + `navigationDestination(for:)` for type-safe routing
+5. Custom layout: `Layout` protocol for non-standard arrangements (flow layout, radial)
+6. Prefer `.task { }` modifier over `onAppear` + `Task { }` — automatically cancelled on disappear
 
-### Step 2: Analysis
-- Evaluate against swift-ios-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### concurrency
+1. Mark ViewModel class `@MainActor` — all mutations safe for SwiftUI
+2. Use `async let` for parallel independent fetches
+3. Use `withTaskGroup` when number of concurrent tasks is dynamic
+4. Replace delegate pattern with `AsyncStream` — easier to consume with `for await`
+5. Actor for shared mutable state accessed from multiple tasks
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### combine
+1. Start with `@Published` property + `$property` publisher
+2. `debounce` for search input (300ms), `throttle` for scroll events
+3. `flatMap` to switch to a new publisher per emission (e.g., fetch on query change)
+4. `catch` to recover from errors and emit empty/fallback value
+5. `.store(in: &cancellables)` on all subscriptions; cancellables in object's lifecycle
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### build
+1. Add SPM dependency: File → Add Package Dependencies in Xcode 15+
+2. `Package.swift` targets: separate between `Sources/` and `Tests/`
+3. Build settings: `SWIFT_VERSION = 5.9`, `IPHONEOS_DEPLOYMENT_TARGET = 16.0`
+4. Code signing: automatic signing for development; manual for CI (match / fastlane)
+5. `#Preview` macro (Xcode 15+) replaces `PreviewProvider` struct
 
 ## Output
 
-### Success
 ```
-## Swift Ios - [Action] Complete
+## iOS Implementation
 
-### Changes Made
-- [List of changes]
+### Model / Service Layer
+[Actor or @Observable service with async methods]
 
-### Validation
-- [Checks passed]
+### SwiftUI View
+[View with appropriate property wrappers]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### UIKit Bridge (if needed)
+[UIViewRepresentable with Coordinator]
 
-### Error
-```
-## Swift Ios - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Dependencies
+[SPM packages to add]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/ios analyze
+# SwiftUI flow layout for tag chips
+/ios swiftui --ios16
 
-# Generate new artifacts
-/ios generate --context ./src
+# Actor-based cache with AsyncStream live updates
+/ios concurrency
 
-# Validate against best practices
-/ios validate --verbose
+# Combine search debounce pipeline
+/ios combine
 
-# Generate documentation
-/ios document --format markdown
+# SwiftData + @Observable for iOS 17
+/ios swiftui --ios17
+
+# UITextView wrapped for SwiftUI
+/ios swiftui --uikit
+
+# Structured concurrency with TaskGroup
+/ios concurrency --ios16
 ```

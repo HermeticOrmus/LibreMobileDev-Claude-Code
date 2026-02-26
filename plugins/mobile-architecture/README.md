@@ -1,46 +1,51 @@
 # Mobile Architecture
 
-MVVM, Clean Architecture, BLoC, Redux for mobile
+Clean Architecture, MVVM, MVI, iOS Coordinator pattern, Android Navigation Component, feature modules, feature flags.
 
 ## What's Included
 
 ### Agents
-- **Mobile Architect** - Specialized agent for MVVM, Clean Architecture, BLoC, Redux for mobile
+- **mobile-architect** - Expert in Clean Architecture layer separation, repository pattern, UseCase design, iOS Coordinator navigation, Android Navigation Component + SafeArgs, multi-module structure
 
 ### Commands
-- `/mobile-arch` - Quick-access command for mobile-architecture workflows
+- `/mobile-arch` - Design architecture, scaffold layers, implement navigation, generate tests
 
 ### Skills
-- **Mobile Arch Patterns** - Pattern library and knowledge base for mobile-architecture
+- **mobile-arch-patterns** - Domain/data/presentation layer code, iOS Coordinator with delegate, MVI reducer, Android NavGraph + SafeArgs, Repository implementation pattern
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Design Clean Architecture for a new feature
+/mobile-arch design --android --feature checkout
 
-## Usage Examples
+# iOS Coordinator for complex flow
+/mobile-arch navigate --ios --feature onboarding
 
-```
-# Use the command directly
-/mobile-arch analyze
-
-# Use the command with specific input
-/mobile-arch generate --context "your project"
-
-# Reference patterns from the skill
-"Apply mobile-arch-patterns patterns to this implementation"
+# Scaffold all layers
+/mobile-arch layers --flutter --feature user-profile
 ```
 
-## Key Patterns
+## Layer Dependencies
 
-- Follow established conventions for mobile-architecture
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+```
+Presentation (ViewModel, UI)
+    depends on ↓
+Domain (UseCase, Repository interface, Entity)
+    depends on ↓
+Data (Repository impl, Remote, Local)
+```
 
-## Related Plugins
+- Domain layer has zero platform imports
+- Data layer has no presentation imports
+- Presentation has no direct data source imports
 
-Check the main README for related plugins in this collection.
+## Pattern Selection
+
+| Pattern | When to Use |
+|---------|-------------|
+| MVVM | Standard features, CRUD, most apps |
+| MVI | Complex state machines, fintech, audit trails |
+| Coordinator (iOS) | Complex multi-step flows, reusable flows |
+| Single-module | Early stage, small team |
+| Multi-module | Build time > 3min, multiple teams |

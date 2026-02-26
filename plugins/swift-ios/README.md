@@ -1,46 +1,63 @@
-# Swift Ios
+# Swift iOS
 
-Swift, SwiftUI, UIKit, Combine, iOS SDK
+Swift concurrency (async/await, actors, AsyncStream), SwiftUI (ViewBuilder, PreferenceKey, Layout protocol), UIViewRepresentable, Combine, SwiftData, Swift Package Manager, Swift macros.
 
 ## What's Included
 
 ### Agents
-- **Ios Developer** - Specialized agent for Swift, SwiftUI, UIKit, Combine, iOS SDK
+- **ios-developer** - Expert in Swift 5.9+ concurrency, SwiftUI advanced patterns, UIKit bridging, Combine reactive pipelines, SwiftData, and SPM
 
 ### Commands
-- `/ios` - Quick-access command for swift-ios workflows
+- `/ios` - Build iOS features: `swiftui`, `concurrency`, `combine`, `build`
 
 ### Skills
-- **Swift Ios Patterns** - Pattern library and knowledge base for swift-ios
+- **swift-ios-patterns** - Actor + AsyncStream for live data, PreferenceKey child-to-parent communication, Layout protocol for flow tags, UIViewRepresentable with Coordinator, Combine debounced search, SwiftData @Model + @Query
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# SwiftUI view with custom layout
+/ios swiftui --ios16
 
-## Usage Examples
+# Actor-based data layer with async/await
+/ios concurrency
 
-```
-# Use the command directly
-/ios analyze
+# Combine search pipeline
+/ios combine
 
-# Use the command with specific input
-/ios generate --context "your project"
-
-# Reference patterns from the skill
-"Apply swift-ios-patterns patterns to this implementation"
+# SwiftData persistence (iOS 17+)
+/ios swiftui --ios17
 ```
 
-## Key Patterns
+## Property Wrapper Reference
 
-- Follow established conventions for swift-ios
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Wrapper | Owned By | Purpose |
+|---------|----------|---------|
+| `@State` | View | Local mutable state |
+| `@Binding` | Parent | Two-way child binding |
+| `@StateObject` | View | Object lifecycle (once) |
+| `@ObservedObject` | Parent | External observed object |
+| `@EnvironmentObject` | Hierarchy | DI via view tree |
+| `@Observable` (iOS 17) | Class | Auto-tracking, replaces ObservableObject |
+| `@Query` (SwiftData) | View | Live database fetch |
 
-## Related Plugins
+## Concurrency Decision Guide
 
-Check the main README for related plugins in this collection.
+| Need | Use |
+|------|-----|
+| One-shot async call | `async/await` |
+| Parallel independent calls | `async let` |
+| Dynamic number of parallel tasks | `withTaskGroup` |
+| Shared mutable state, multiple callers | `actor` |
+| Event stream (location, BLE) | `AsyncStream` |
+| Reactive value pipeline | `Combine` or `AsyncPublisher` |
+| UI-bound objects | `@MainActor` class |
+
+## Critical Rules
+
+- Mark ViewModel `@MainActor` — eliminates need for `DispatchQueue.main.async` in every method
+- Use `.task { }` modifier not `onAppear + Task { }` — `.task` cancels automatically when view disappears
+- Never call `MainActor.run { }` inside a `@MainActor`-isolated method — already on main
+- `AsyncStream` continuation must call `finish()` when the underlying source ends
+- Store `AnyCancellable` in `Set<AnyCancellable>` — not in local variable (would cancel immediately)
+- `@Observable` (iOS 17) breaks `@ObservedObject` injection — use `@State` and pass by reference

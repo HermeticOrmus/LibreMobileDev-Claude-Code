@@ -1,46 +1,50 @@
 # Mobile Payments
 
-In-app purchases, subscriptions, payment gateways
+Apple StoreKit 2, Google Play Billing Library 6+, RevenueCat, Stripe, subscription lifecycle management.
 
 ## What's Included
 
 ### Agents
-- **Mobile Payments Engineer** - Specialized agent for In-app purchases, subscriptions, payment gateways
+- **mobile-payments-engineer** - Expert in StoreKit 2 async/await, Play Billing acknowledgment, RevenueCat entitlements, subscription state machine, server-side validation
 
 ### Commands
-- `/mobile-pay` - Quick-access command for mobile-payments workflows
+- `/mobile-pay` - Purchase flow, receipt validation, restore, subscription state management
 
 ### Skills
-- **Payment Patterns** - Pattern library and knowledge base for mobile-payments
+- **payment-patterns** - StoreKit 2 full flow Swift, Play Billing Kotlin with acknowledgment, RevenueCat iOS+Android, subscription renewal states
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# iOS subscription implementation
+/mobile-pay subscription --ios --type subscription
 
-## Usage Examples
+# Android Play Billing setup
+/mobile-pay purchase --android
 
-```
-# Use the command directly
-/mobile-pay analyze
-
-# Use the command with specific input
-/mobile-pay generate --context "your project"
-
-# Reference patterns from the skill
-"Apply payment-patterns patterns to this implementation"
+# RevenueCat cross-platform
+/mobile-pay subscription --revenuecat --feature premium
 ```
 
-## Key Patterns
+## Subscription State Machine
 
-- Follow established conventions for mobile-payments
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+```
+ACTIVE
+  ↓ payment fails
+BILLING_RETRY (grace period — keep access)
+  ↓ grace period ends
+EXPIRED
+  ↓ user resubscribes
+ACTIVE
 
-## Related Plugins
+ACTIVE → user cancels → CANCELLED (active until period end) → EXPIRED
+ACTIVE → refund → REVOKED (immediately)
+```
 
-Check the main README for related plugins in this collection.
+## Critical Rules
+
+- Always call `Transaction.finish()` (iOS) — otherwise purchase stays in pending state forever
+- Always call `acknowledgePurchase()` (Android) within 3 days — Play auto-refunds if not acknowledged
+- Check entitlements on every app launch, not just after purchase
+- Never unlock features based on purchase result alone — verify server-side or via RevenueCat
+- `Transaction.updates` listener required for renewals, grace periods, and revocations

@@ -1,46 +1,45 @@
 # Mobile Analytics
 
-Event tracking, crash reporting, user analytics, funnels
+Firebase Analytics, Amplitude, Mixpanel, AppsFlyer attribution, Crashlytics, Sentry — event taxonomy, funnels, crash reporting.
 
 ## What's Included
 
 ### Agents
-- **Mobile Analytics Engineer** - Specialized agent for Event tracking, crash reporting, user analytics, funnels
+- **mobile-analytics-engineer** - Expert in Firebase event constraints, funnel design, AppsFlyer attribution, Crashlytics non-fatal errors, A/B test instrumentation, crash-free rate monitoring
 
 ### Commands
-- `/mobile-analytics` - Quick-access command for mobile-analytics workflows
+- `/mobile-analytics` - Implement tracking, design funnels, configure attribution, set up crash reporting
 
 ### Skills
-- **Analytics Patterns** - Pattern library and knowledge base for mobile-analytics
+- **analytics-patterns** - AnalyticsService abstraction (Swift + Kotlin), Firebase event constraints, DebugView commands, Crashlytics error recording, AppsFlyer attribution, funnel event schema
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Design and implement checkout funnel
+/mobile-analytics funnel --ios --feature checkout
 
-## Usage Examples
+# Set up crash reporting
+/mobile-analytics crash --android --sdk firebase
 
-```
-# Use the command directly
-/mobile-analytics analyze
-
-# Use the command with specific input
-/mobile-analytics generate --context "your project"
-
-# Reference patterns from the skill
-"Apply analytics-patterns patterns to this implementation"
+# Attribution tracking
+/mobile-analytics attribute --android --sdk appsflyer
 ```
 
-## Key Patterns
+## Firebase Event Constraints
 
-- Follow established conventions for mobile-analytics
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Field | Limit |
+|-------|-------|
+| Event name | 40 chars, snake_case |
+| Parameters per event | 25 |
+| Parameter name | 40 chars |
+| String parameter value | 100 chars |
+| Custom user properties | 25 |
 
-## Related Plugins
+## Key Rules
 
-Check the main README for related plugins in this collection.
+- Always abstract SDK calls behind an `AnalyticsService` class — never call Firebase directly from UI
+- Never log PII (email, phone, name) as event properties
+- Use `screen_name` parameter to segment events by origin screen
+- Validate with Firebase DebugView before releasing
+- Target > 99.5% crash-free users; alert below 99%

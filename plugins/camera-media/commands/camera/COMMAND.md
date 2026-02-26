@@ -1,87 +1,88 @@
 # /camera
 
-A quick-access command for camera-media workflows in Claude Code.
+Camera and media capture setup, configuration, processing, and AR integration.
 
 ## Trigger
 
-`/camera [action] [options]`
+`/camera [action] [platform]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing camera-media implementation
-- `generate` - Generate new camera-media artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for camera-media artifacts
+- `configure` - Set up AVCaptureSession / CameraX / CameraController for target use case
+- `capture` - Implement photo or video capture with output handling
+- `process` - Image/video processing pipeline (filters, compression, ML analysis)
+- `ar` - ARKit (iOS) or ARCore (Android) integration setup
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Platform Flags
+
+- `--ios` - AVFoundation / ARKit
+- `--android` - CameraX / ARCore
+- `--flutter` - camera package
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of camera-media artifacts
-- Determine applicable standards and conventions
+### configure
+1. Ask for use case: still photo, video recording, live ML analysis, AR overlay, or combined
+2. Select appropriate API and quality preset:
+   - Still photo: `.photo` preset (iOS), `CAPTURE_MODE_MINIMIZE_LATENCY` (Android)
+   - Video: `.high` preset (iOS), `VideoCapture<Recorder>` use case (Android)
+   - ML analysis: Add `AVCaptureVideoDataOutput` / `ImageAnalysis` use case
+3. Output permission setup + session initialization code
+4. Include lifecycle cleanup code (session stop, controller dispose)
 
-### Step 2: Analysis
-- Evaluate against camera-media-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### capture
+Output complete capture implementation:
+- iOS: `AVCapturePhotoSettings` with format selection + `AVCapturePhotoCaptureDelegate`
+- Android: `ImageCapture.OutputFileOptions` + `OnImageSavedCallback`
+- Flutter: `CameraController.takePicture()` returning `XFile`
+- Includes error handling for each platform
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### process
+Options:
+- Filter: Apply CoreImage / RenderScript / Flutter image package filter
+- Compress: Output HEIC/JPEG compression code with quality parameter
+- Resize: Downsample for upload without loading full image into memory
+- Analyze: ML Kit / Vision framework integration for face/text/barcode detection
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### ar
+- iOS ARKit: `ARSession` + `ARWorldTrackingConfiguration` + `ARSCNView`/`ARView` setup
+- Android ARCore: `ArFragment` + `Session` + `Anchor` placement
+- Flutter: `ar_flutter_plugin` integration
 
-## Output
+## Output Format
 
-### Success
 ```
-## Camera Media - [Action] Complete
+## Camera Configuration
 
-### Changes Made
-- [List of changes]
+### Platform: [iOS/Android/Flutter]
+### Use Case: [description]
 
-### Validation
-- [Checks passed]
+### Permissions
+[Manifest/Info.plist entries]
+[Runtime request code]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### Session Setup
+[Complete initialization code]
 
-### Error
-```
-## Camera Media - [Action] Failed
+### Capture Method
+[Capture implementation]
 
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Cleanup
+[Lifecycle teardown]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/camera analyze
+# Configure iOS camera for photo capture
+/camera configure --ios
 
-# Generate new artifacts
-/camera generate --context ./src
+# Implement Android video recording
+/camera capture --android
 
-# Validate against best practices
-/camera validate --verbose
+# Set up real-time face detection
+/camera process --android
 
-# Generate documentation
-/camera document --format markdown
+# ARKit scene anchoring
+/camera ar --ios
 ```

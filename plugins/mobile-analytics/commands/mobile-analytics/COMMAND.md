@@ -1,87 +1,87 @@
 # /mobile-analytics
 
-A quick-access command for mobile-analytics workflows in Claude Code.
+Event tracking, funnel design, attribution setup, crash reporting configuration.
 
 ## Trigger
 
 `/mobile-analytics [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing mobile-analytics implementation
-- `generate` - Generate new mobile-analytics artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for mobile-analytics artifacts
+- `track` - Implement event tracking for a feature or flow
+- `funnel` - Design and implement a conversion funnel
+- `attribute` - Configure AppsFlyer or Firebase attribution
+- `crash` - Set up Crashlytics or Sentry crash reporting
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - Swift implementation
+- `--android` - Kotlin implementation
+- `--flutter` - Dart implementation
+- `--sdk <name>` - firebase, amplitude, mixpanel, appsflyer
+- `--feature <name>` - Feature or flow to instrument
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of mobile-analytics artifacts
-- Determine applicable standards and conventions
+### track
+1. Define event name (snake_case, max 40 chars)
+2. Define parameters (max 25, no PII)
+3. Implement in `AnalyticsService` abstraction
+4. Output platform SDK call
+5. Include DebugView validation command
 
-### Step 2: Analysis
-- Evaluate against analytics-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### funnel
+1. Map user journey as sequence of events
+2. Define consistent parameter schema across events
+3. Output event taxonomy table
+4. Output implementation for each step
+5. Define success metric (e.g., purchase event)
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### attribute
+1. Configure AppsFlyer/Firebase SDK initialization
+2. Map in-app events to attribution schema
+3. Handle deferred deep link from install
+4. Test install attribution in sandbox mode
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### crash
+1. Initialize Crashlytics/Sentry with crash-free rate target
+2. Set up user ID binding without PII
+3. Add custom keys for context (screen, API endpoint)
+4. Implement non-fatal error recording
+5. Output crash-free rate monitoring query
 
-## Output
+## Output Format
 
-### Success
 ```
-## Mobile Analytics - [Action] Complete
+## Event Taxonomy
 
-### Changes Made
-- [List of changes]
+| Event Name | Parameters | Trigger |
+|------------|-----------|---------|
 
-### Validation
-- [Checks passed]
+## Implementation
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### AnalyticsService
+[Service class code]
 
-### Error
-```
-## Mobile Analytics - [Action] Failed
+### Usage
+[Call sites in feature code]
 
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+## Validation
+[DebugView command or Amplitude Live stream steps]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/mobile-analytics analyze
+# Instrument checkout funnel for iOS
+/mobile-analytics funnel --ios --sdk firebase --feature checkout
 
-# Generate new artifacts
-/mobile-analytics generate --context ./src
+# Set up AppsFlyer for Android
+/mobile-analytics attribute --android --sdk appsflyer
 
-# Validate against best practices
-/mobile-analytics validate --verbose
+# Crashlytics + non-fatal error logging
+/mobile-analytics crash --ios --sdk firebase
 
-# Generate documentation
-/mobile-analytics document --format markdown
+# Track product catalog events (all platforms)
+/mobile-analytics track --flutter --feature product-catalog
 ```

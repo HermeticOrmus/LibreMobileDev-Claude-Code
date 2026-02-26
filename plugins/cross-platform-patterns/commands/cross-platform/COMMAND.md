@@ -1,87 +1,80 @@
 # /cross-platform
 
-A quick-access command for cross-platform-patterns workflows in Claude Code.
+Design shared code architecture, implement platform channels, evaluate KMM vs Flutter vs RN.
 
 ## Trigger
 
 `/cross-platform [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing cross-platform-patterns implementation
-- `generate` - Generate new cross-platform-patterns artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for cross-platform-patterns artifacts
+- `design` - Architect shared vs platform-specific code split
+- `channel` - Implement Flutter MethodChannel or EventChannel
+- `kmp` - Set up Kotlin Multiplatform expect/actual declaration
+- `decide` - Evaluate which cross-platform approach to use for given requirements
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--flutter` - Flutter-specific output
+- `--kmp` - Kotlin Multiplatform output
+- `--rn` - React Native New Architecture output
+- `--feature <name>` - Name of feature being implemented
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of cross-platform-patterns artifacts
-- Determine applicable standards and conventions
+### design
+1. List all platform-specific APIs required (camera, biometrics, push, etc.)
+2. Identify what is pure business logic (can be shared)
+3. Draw layer boundary: shared data/domain layers vs platform presentation layer
+4. Output directory structure recommendation
 
-### Step 2: Analysis
-- Evaluate against cross-platform-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### channel
+For Flutter MethodChannel:
+1. Define channel name (reverse domain: `com.company/feature`)
+2. Write Dart caller with error handling for `PlatformException`
+3. Write Swift handler with `FlutterMethodChannel.setMethodCallHandler`
+4. Write Kotlin handler with `MethodChannel.setMethodCallHandler`
+5. For streams: use EventChannel with `FlutterStreamHandler`
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### kmp
+1. Define `expect` class or function in `commonMain`
+2. Write `androidMain` actual implementation
+3. Write `iosMain` actual implementation (with cinterop if needed)
+4. Show Gradle multiplatform configuration
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
-
-## Output
-
-### Success
+### decide
+Collect requirements, output decision matrix:
 ```
-## Cross Platform Patterns - [Action] Complete
+## Framework Recommendation
 
-### Changes Made
-- [List of changes]
+### Requirements Analysis
+- Platform-specific APIs needed: [list]
+- Team background: [iOS+Android / JS / Kotlin / Dart]
+- Custom native UI required: [Yes/No]
+- Timeline: [constraint]
 
-### Validation
-- [Checks passed]
+### Recommendation: [Flutter / KMM / React Native / Native x2]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### Rationale
+[3-5 bullet points]
 
-### Error
-```
-## Cross Platform Patterns - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Shared Code Estimate
+- Can be shared: ~[N]% of codebase
+- Must be native: ~[N]% of codebase
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/cross-platform analyze
+# Design shared architecture for a banking app
+/cross-platform design --feature payments
 
-# Generate new artifacts
-/cross-platform generate --context ./src
+# Implement biometric auth channel in Flutter
+/cross-platform channel --flutter --feature biometrics
 
-# Validate against best practices
-/cross-platform validate --verbose
+# KMM shared repository pattern
+/cross-platform kmp --feature user-data
 
-# Generate documentation
-/cross-platform document --format markdown
+# Help decide between Flutter and KMM
+/cross-platform decide
 ```

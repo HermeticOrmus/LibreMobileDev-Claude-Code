@@ -1,88 +1,280 @@
 # Camera Media Patterns
 
-A comprehensive pattern library and knowledge base for camera-media.
+## iOS: AVCaptureSession Setup
 
-## Knowledge Base
+```swift
+import AVFoundation
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern camera-media
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for camera-media
+class CameraManager: NSObject {
+    let session = AVCaptureSession()
+    private var photoOutput = AVCapturePhotoOutput()
+    private let sessionQueue = DispatchQueue(label: "camera.session")
 
-### Architecture Principles
-- Separation of concerns within camera-media implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+    func configure() {
+        sessionQueue.async {
+            self.session.beginConfiguration()
+            self.session.sessionPreset = .photo
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+            // Find rear wide camera
+            guard let device = AVCaptureDevice.default(
+                .builtInWideAngleCamera, for: .video, position: .back
+            ) else { return }
 
-## Patterns
+            do {
+                let input = try AVCaptureDeviceInput(device: device)
+                if self.session.canAddInput(input) {
+                    self.session.addInput(input)
+                }
+            } catch { return }
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+            if self.session.canAddOutput(self.photoOutput) {
+                self.session.addOutput(self.photoOutput)
+                // Enable HEIC if available
+                if self.photoOutput.availablePhotoCodecTypes.contains(.hevc) {
+                    // Use HEIC in capturePhoto settings
+                }
+            }
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+            self.session.commitConfiguration()
+            self.session.startRunning()
+        }
+    }
+}
+```
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+### Capture Photo with HEIC/JPEG
+```swift
+func capturePhoto() {
+    let settings: AVCapturePhotoSettings
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+    if photoOutput.availablePhotoCodecTypes.contains(.hevc) {
+        settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+    } else {
+        settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
+    }
 
-## Anti-Patterns
+    settings.flashMode = .auto
+    photoOutput.capturePhoto(with: settings, delegate: self)
+}
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+// AVCapturePhotoCaptureDelegate
+func photoOutput(_ output: AVCapturePhotoOutput,
+                 didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+    guard let data = photo.fileDataRepresentation() else { return }
+    let image = UIImage(data: data)
+    // Save or process image
+}
+```
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+### Real-time Frame Processing (CoreImage)
+```swift
+extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
+    func captureOutput(_ output: AVCaptureOutput,
+                       didOutput sampleBuffer: CMSampleBuffer,
+                       from connection: AVCaptureConnection) {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+        // Apply filter
+        let filter = CIFilter.colorControls()
+        filter.inputImage = ciImage
+        filter.saturation = 0 // Grayscale
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+        let output = filter.outputImage
+        // Render to Metal texture or UIImage
+    }
+}
+```
 
-## References
+---
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+## Android: CameraX Setup
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+```kotlin
+import androidx.camera.core.*
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.content.ContextCompat
 
-### Tools
-- Development tools for camera-media
-- Testing and validation tools
-- Monitoring and observability tools
+class CameraFragment : Fragment() {
+
+    private lateinit var imageCapture: ImageCapture
+
+    fun startCamera(previewView: PreviewView) {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
+
+            val preview = Preview.Builder().build().also {
+                it.setSurfaceProvider(previewView.surfaceProvider)
+            }
+
+            imageCapture = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .build()
+
+            val imageAnalyzer = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+                .also {
+                    it.setAnalyzer(ContextCompat.getMainExecutor(requireContext())) { imageProxy ->
+                        analyzeImage(imageProxy)
+                        imageProxy.close() // Always close to unblock camera pipeline
+                    }
+                }
+
+            cameraProvider.unbindAll()
+            cameraProvider.bindToLifecycle(
+                viewLifecycleOwner,
+                CameraSelector.DEFAULT_BACK_CAMERA,
+                preview,
+                imageCapture,
+                imageAnalyzer
+            )
+        }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    fun takePicture() {
+        val outputOptions = ImageCapture.OutputFileOptions
+            .Builder(createImageFile())
+            .build()
+
+        imageCapture.takePicture(
+            outputOptions,
+            ContextCompat.getMainExecutor(requireContext()),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    val savedUri = output.savedUri
+                    // Process saved image
+                }
+                override fun onError(exc: ImageCaptureException) {
+                    Log.e("Camera", "Photo capture failed: ${exc.message}")
+                }
+            }
+        )
+    }
+}
+```
+
+### ML Kit Vision Analysis
+```kotlin
+private fun analyzeImage(imageProxy: ImageProxy) {
+    val mediaImage = imageProxy.image ?: return
+    val inputImage = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+
+    val detector = FaceDetection.getClient()
+    detector.process(inputImage)
+        .addOnSuccessListener { faces ->
+            faces.forEach { face ->
+                val bounds = face.boundingBox
+                // Draw overlay on bounds
+            }
+        }
+        .addOnCompleteListener { imageProxy.close() }
+}
+```
+
+---
+
+## Flutter: Camera Package
+
+```dart
+import 'package:camera/camera.dart';
+
+class CameraScreen extends StatefulWidget {
+  const CameraScreen({super.key});
+
+  @override
+  State<CameraScreen> createState() => _CameraScreenState();
+}
+
+class _CameraScreenState extends State<CameraScreen> {
+  late CameraController _controller;
+  late Future<void> _initFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initCamera();
+  }
+
+  Future<void> _initCamera() async {
+    final cameras = await availableCameras();
+    final backCamera = cameras.firstWhere(
+      (c) => c.lensDirection == CameraLensDirection.back,
+    );
+
+    _controller = CameraController(
+      backCamera,
+      ResolutionPreset.high,
+      enableAudio: false,
+    );
+
+    _initFuture = _controller.initialize();
+  }
+
+  Future<void> capturePhoto() async {
+    await _initFuture;
+    final XFile photo = await _controller.takePicture();
+    // photo.path contains the file path
+    // photo.readAsBytes() for in-memory processing
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _initFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return CameraPreview(_controller);
+        }
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+}
+```
+
+---
+
+## HEIC vs JPEG Decision Matrix
+
+| Factor | HEIC | JPEG |
+|--------|------|------|
+| File size | ~50% smaller | Larger |
+| Quality at same size | Higher | Lower |
+| iOS compatibility | iOS 11+ | Universal |
+| Android sharing | Requires transcoding | Direct share |
+| Web upload | May need conversion | Native support |
+| Recommendation | Intra-app only | Cross-platform sharing |
+
+## Camera Permission Flow
+
+```swift
+// iOS — request before AVCaptureSession.startRunning()
+AVCaptureDevice.requestAccess(for: .video) { granted in
+    if granted {
+        DispatchQueue.main.async { self.configure() }
+    } else {
+        // Show settings deep link: UIApplication.openSettingsURLString
+    }
+}
+```
+
+```kotlin
+// Android — use Activity Result API
+private val requestPermission =
+    registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) startCamera()
+        else showPermissionRationale()
+    }
+
+// Request on button tap or fragment start
+requestPermission.launch(Manifest.permission.CAMERA)
+```

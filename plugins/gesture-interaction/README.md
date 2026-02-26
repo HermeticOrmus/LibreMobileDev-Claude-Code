@@ -1,46 +1,44 @@
 # Gesture Interaction
 
-Touch gestures, haptics, motion, custom recognizers
+UIGestureRecognizer, SwiftUI gestures, Android GestureDetector/MotionEvent, Flutter GestureDetector, haptic feedback, custom recognizers, velocity-based physics.
 
 ## What's Included
 
 ### Agents
-- **Gesture Engineer** - Specialized agent for Touch gestures, haptics, motion, custom recognizers
+- **gesture-engineer** - Expert in gesture recognizer state machines, velocity tracking, simultaneous recognition, custom gesture recognizers, haptic feedback timing
 
 ### Commands
-- `/gestures` - Quick-access command for gesture-interaction workflows
+- `/gestures` - Detect, build custom recognizers, add haptics, generate test checklist
 
 ### Skills
-- **Gesture Patterns** - Pattern library and knowledge base for gesture-interaction
+- **gesture-patterns** - UIPanGestureRecognizer with velocity, custom UIGestureRecognizer subclass, Compose pointerInput/detectDragGestures, Flutter GestureDetector with fling, haptic timing table
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Swipe-to-dismiss card with fling physics
+/gestures detect --ios --gesture swipe --velocity
 
-## Usage Examples
+# Pinch-to-zoom in Jetpack Compose
+/gestures detect --android --gesture pinch
 
-```
-# Use the command directly
-/gestures analyze
-
-# Use the command with specific input
-/gestures generate --context "your project"
-
-# Reference patterns from the skill
-"Apply gesture-patterns patterns to this implementation"
+# Add haptics to Flutter drag
+/gestures haptic --flutter
 ```
 
-## Key Patterns
+## Haptic Reference
 
-- Follow established conventions for gesture-interaction
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Moment | iOS | Android | Flutter |
+|--------|-----|---------|---------|
+| Tap | `.light` | `KEYBOARD_TAP` | `lightImpact()` |
+| Long press | `.medium` | `LONG_PRESS` | `mediumImpact()` |
+| Confirm | `.heavy` | `CONFIRM` | `heavyImpact()` |
+| Selection | `UISelectionFeedbackGenerator` | `CLOCK_TICK` | `selectionClick()` |
+| Error | `.error` notification | `REJECT` | `vibrate()` |
 
-## Related Plugins
+## Key Rules
 
-Check the main README for related plugins in this collection.
+- Call `prepare()` on iOS haptic generators 200-500ms before expected use
+- Never require swipe-only for destructive actions — provide button fallback
+- Velocity > 600 px/s typically means user wants a fling, not a snap-back
+- `shouldRecognizeSimultaneouslyWith:` resolves iOS gesture conflicts

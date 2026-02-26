@@ -1,46 +1,54 @@
 # Mobile Performance
 
-Launch time, memory, battery, network, UI jank
+iOS Instruments, Android Profiler, Flutter DevTools, launch time, memory management, rendering at 60/120fps.
 
 ## What's Included
 
 ### Agents
-- **Mobile Perf Engineer** - Specialized agent for Launch time, memory, battery, network, UI jank
+- **mobile-perf-engineer** - Expert in profiling with Instruments, Android Profiler, and Flutter DevTools; identifies and fixes CPU, memory, rendering, and I/O bottlenecks
 
 ### Commands
-- `/mobile-perf` - Quick-access command for mobile-performance workflows
+- `/mobile-perf` - Profile, diagnose, and fix performance issues: `profile`, `launch`, `memory`, `render`
 
 ### Skills
-- **Mobile Perf Patterns** - Pattern library and knowledge base for mobile-performance
+- **mobile-perf-patterns** - Image downsampling with ImageIO, OS Signpost launch measurement, StrictMode for Android main thread violations, RecyclerView DiffUtil, Flutter RepaintBoundary and compute()
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Diagnose Flutter frame drops
+/mobile-perf render --flutter
 
-## Usage Examples
+# iOS launch time over 400ms
+/mobile-perf launch --ios
 
-```
-# Use the command directly
-/mobile-perf analyze
+# Android memory leak investigation
+/mobile-perf memory --android
 
-# Use the command with specific input
-/mobile-perf generate --context "your project"
-
-# Reference patterns from the skill
-"Apply mobile-perf-patterns patterns to this implementation"
+# Read a Time Profiler callstack
+/mobile-perf profile --ios
 ```
 
-## Key Patterns
+## Frame Budget Reference
 
-- Follow established conventions for mobile-performance
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Display | Frame budget | Target render time |
+|---------|-------------|-------------------|
+| 60 Hz | 16.67ms | < 12ms |
+| 90 Hz | 11.11ms | < 9ms |
+| 120 Hz (ProMotion) | 8.33ms | < 6ms |
 
-## Related Plugins
+## Profiling Tools by Platform
 
-Check the main README for related plugins in this collection.
+| Platform | CPU | Memory | Rendering | Launch |
+|----------|-----|--------|-----------|--------|
+| iOS | Instruments: Time Profiler | Allocations + Leaks | Core Animation | Application Launch template |
+| Android | CPU Profiler (System Trace) | Memory Profiler + heap dump | GPU Profiler | Perfetto + StartupTracing |
+| Flutter | DevTools: Timeline | DevTools: Memory | Performance view | Dart VM startup events |
+
+## Critical Rules
+
+- Measure before optimizing — never guess at bottlenecks
+- Image downsampling is the single highest-ROI memory fix for photo-heavy apps
+- Main thread I/O is the #1 source of Android jank — catch with StrictMode in debug builds
+- Cold launch target: < 400ms to first frame on iOS, < 500ms on Android
+- Flutter: `const` constructors are free; use everywhere to prevent unnecessary rebuilds

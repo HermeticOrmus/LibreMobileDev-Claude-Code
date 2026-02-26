@@ -1,87 +1,90 @@
 # /mobile-pay
 
-A quick-access command for mobile-payments workflows in Claude Code.
+Implement IAP, subscriptions, purchase flows, receipt validation, and subscription state management.
 
 ## Trigger
 
 `/mobile-pay [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing mobile-payments implementation
-- `generate` - Generate new mobile-payments artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for mobile-payments artifacts
+- `purchase` - Implement product fetch and purchase flow
+- `validate` - Server-side receipt validation setup
+- `restore` - Implement purchase restoration
+- `subscription` - Subscription state management and renewal handling
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - StoreKit 2 (iOS 15+)
+- `--android` - Play Billing Library 6+
+- `--revenuecat` - RevenueCat cross-platform
+- `--type <product>` - consumable, non-consumable, subscription
+- `--feature <name>` - Feature name (e.g. premium, credits)
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of mobile-payments artifacts
-- Determine applicable standards and conventions
+### purchase
+1. Product IDs and App Store Connect / Play Console setup requirements
+2. Product fetch on subscription screen load
+3. Purchase initiation and result handling
+4. Transaction finishing / acknowledgment
+5. Entitlement unlock
 
-### Step 2: Analysis
-- Evaluate against payment-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### validate
+1. Server endpoint setup for receipt validation
+2. iOS: App Store Server API JWT setup
+3. Android: Google Play Developer API setup
+4. Webhook configuration for subscription events (renewals, cancellations, refunds)
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### restore
+1. `AppStore.sync()` (iOS) or `queryPurchasesAsync` (Android)
+2. Re-check entitlements after sync
+3. Handle "nothing to restore" case gracefully
+4. UI feedback during restoration
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### subscription
+1. Subscription status check on app launch
+2. `Transaction.updates` listener for real-time status changes
+3. Grace period handling — allow access while payment retries
+4. Upgrade/downgrade flow (Play: `setSubscriptionUpdateParams`)
+5. Cancellation handling — access until period end, not immediately
 
 ## Output
 
-### Success
 ```
-## Mobile Payments - [Action] Complete
+## Payment Implementation
 
-### Changes Made
-- [List of changes]
+### Products Required
+[App Store Connect / Play Console setup]
 
-### Validation
-- [Checks passed]
+### On Launch
+[Entitlement check code]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### Purchase Flow
+[Product fetch + purchase + transaction finish]
 
-### Error
-```
-## Mobile Payments - [Action] Failed
+### Restoration
+[Restore purchases code]
 
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Sandbox Testing
+[StoreKit Configuration or Play test instructions]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/mobile-pay analyze
+# Full iOS StoreKit 2 subscription flow
+/mobile-pay subscription --ios --type subscription
 
-# Generate new artifacts
-/mobile-pay generate --context ./src
+# Android Play Billing consumable (coins, credits)
+/mobile-pay purchase --android --type consumable
 
-# Validate against best practices
-/mobile-pay validate --verbose
+# RevenueCat cross-platform premium subscription
+/mobile-pay subscription --revenuecat --feature premium
 
-# Generate documentation
-/mobile-pay document --format markdown
+# Server-side receipt validation setup
+/mobile-pay validate --ios
+
+# Restore purchases button implementation
+/mobile-pay restore --ios
 ```

@@ -1,46 +1,56 @@
 # Mobile Testing
 
-Widget tests, integration tests, UI automation, device farms
+XCTest, XCUITest, Espresso, Compose testing, Flutter widget/integration tests, Detox, Firebase Test Lab, golden screenshot regression.
 
 ## What's Included
 
 ### Agents
-- **Mobile Test Engineer** - Specialized agent for Widget tests, integration tests, UI automation, device farms
+- **mobile-test-engineer** - Expert in iOS/Android/Flutter testing pyramids, async test patterns, UI automation, device farms, and golden testing
 
 ### Commands
-- `/mobile-test` - Quick-access command for mobile-testing workflows
+- `/mobile-test` - Write tests at any layer: `unit`, `ui`, `golden`, `cloud`
 
 ### Skills
-- **Mobile Testing Patterns** - Pattern library and knowledge base for mobile-testing
+- **mobile-testing-patterns** - XCTest async/await with mocks, XCUITest checkout flow, Espresso with Compose, Flutter widget test with Riverpod overrides, Flutter integration test, golden test with matchesGoldenFile
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# iOS unit tests with async/await
+/mobile-test unit --ios
 
-## Usage Examples
+# Compose UI tests
+/mobile-test ui --android
 
-```
-# Use the command directly
-/mobile-test analyze
+# Flutter golden screenshot regression
+/mobile-test golden --flutter
 
-# Use the command with specific input
-/mobile-test generate --context "your project"
-
-# Reference patterns from the skill
-"Apply mobile-testing-patterns patterns to this implementation"
+# Firebase Test Lab matrix run
+/mobile-test cloud --android
 ```
 
-## Key Patterns
+## Testing Pyramid
 
-- Follow established conventions for mobile-testing
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+```
+          [Device Farm]          ← real devices, OS matrix, pre-release
+        [Integration Tests]      ← end-to-end flows, simulator/emulator
+      [Widget / Component Tests] ← individual screen with mocked deps
+    [Unit Tests]                 ← business logic, ViewModels, parsers
+```
 
-## Related Plugins
+## Test Framework Reference
 
-Check the main README for related plugins in this collection.
+| Layer | iOS | Android | Flutter | React Native |
+|-------|-----|---------|---------|--------------|
+| Unit | XCTest | JUnit5 + MockK | dart:test | Jest |
+| Component | XCTest (no device) | Robolectric | widget test | React Native Testing Library |
+| UI | XCUITest | Espresso / Compose | integration_test | Detox |
+| Device Farm | Firebase Test Lab | Firebase Test Lab | Firebase Test Lab | Sauce Labs |
+
+## Critical Rules
+
+- Set `continueAfterFailure = false` in XCUITest — don't run steps after first failure
+- Use `accessibilityIdentifier` (iOS) and `testTag` (Flutter) — not text labels that change with localization
+- Inject `--uitesting` launch argument to disable animations and mock network in UI tests
+- Never call `Thread.sleep` in tests — use `XCTNSPredicateExpectation`, `waitForExistence`, or `pumpAndSettle`
+- Store golden files in git; update with `flutter test --update-goldens` only on intentional design changes

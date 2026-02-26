@@ -1,46 +1,48 @@
 # Flutter Development
 
-Flutter widgets, Dart, state management, packages
+Flutter widgets, Dart, state management (Riverpod, BLoC), custom painter, platform channels, Dart isolates.
 
 ## What's Included
 
 ### Agents
-- **Flutter Developer** - Specialized agent for Flutter widgets, Dart, state management, packages
+- **flutter-developer** - Expert in widget tree, Riverpod providers, BLoC pattern, CustomPainter Canvas API, Flutter rendering pipeline, isolates for heavy work
 
 ### Commands
-- `/flutter` - Quick-access command for flutter-development workflows
+- `/flutter` - Create widgets, implement state, paint custom visuals, optimize rebuilds
 
 ### Skills
-- **Flutter Patterns** - Pattern library and knowledge base for flutter-development
+- **flutter-patterns** - Riverpod StateNotifierProvider, BLoC event/state, CustomPainter, isolate compute(), rebuild optimization with select()
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Scaffold a Riverpod-managed feature
+/flutter create --riverpod --feature cart
 
-## Usage Examples
+# Implement BLoC for authentication
+/flutter state --bloc --feature auth
 
-```
-# Use the command directly
-/flutter analyze
+# Custom painter for data visualization
+/flutter paint --feature waveform
 
-# Use the command with specific input
-/flutter generate --context "your project"
-
-# Reference patterns from the skill
-"Apply flutter-patterns patterns to this implementation"
+# Fix excessive rebuilds
+/flutter optimize
 ```
 
-## Key Patterns
+## State Management Comparison
 
-- Follow established conventions for flutter-development
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| | Riverpod | BLoC | Provider |
+|---|---------|------|----------|
+| Learning curve | Medium | Medium-High | Low |
+| Testability | Excellent | Excellent | Good |
+| Async support | Built-in (FutureProvider) | Manual | Manual |
+| Recommended for | New projects | Event-heavy flows | Legacy |
+| Type safety | Full | Full | Full |
 
-## Related Plugins
+## Key Rules
 
-Check the main README for related plugins in this collection.
+- `const` constructors wherever possible — eliminates rebuilds
+- `ref.watch(provider.select(...))` narrows rebuild scope
+- Never put business logic in `build()` methods
+- Use `ListView.builder` for any list with more than ~20 items
+- Background work goes in `compute()` or `Isolate.run()`

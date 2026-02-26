@@ -1,88 +1,295 @@
 # Flutter Patterns
 
-A comprehensive pattern library and knowledge base for flutter-development.
+## Riverpod: StateNotifierProvider
 
-## Knowledge Base
+```dart
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern flutter-development
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for flutter-development
+// State
+@immutable
+class CartState {
+  final List<CartItem> items;
+  final bool isLoading;
 
-### Architecture Principles
-- Separation of concerns within flutter-development implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+  const CartState({this.items = const [], this.isLoading = false});
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+  CartState copyWith({List<CartItem>? items, bool? isLoading}) => CartState(
+    items: items ?? this.items,
+    isLoading: isLoading ?? this.isLoading,
+  );
 
-## Patterns
+  double get total => items.fold(0, (sum, item) => sum + item.price);
+}
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+// Notifier
+class CartNotifier extends StateNotifier<CartState> {
+  CartNotifier(this._cartRepository) : super(const CartState());
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+  final CartRepository _cartRepository;
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+  Future<void> addItem(Product product) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      await _cartRepository.addToCart(product);
+      state = state.copyWith(
+        items: [...state.items, CartItem.fromProduct(product)],
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false);
+      rethrow;
+    }
+  }
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+  void removeItem(String itemId) {
+    state = state.copyWith(
+      items: state.items.where((item) => item.id != itemId).toList(),
+    );
+  }
+}
 
-## Anti-Patterns
+// Provider
+final cartProvider = StateNotifierProvider<CartNotifier, CartState>((ref) {
+  return CartNotifier(ref.watch(cartRepositoryProvider));
+});
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+// FutureProvider with family
+final productProvider = FutureProvider.family<Product, String>((ref, id) {
+  return ref.watch(productRepositoryProvider).getProduct(id);
+});
+```
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+### Using Riverpod in Widgets
+```dart
+class CartScreen extends ConsumerWidget {
+  const CartScreen({super.key});
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cartState = ref.watch(cartProvider);
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+    // Listen for errors without rebuilding
+    ref.listen(cartProvider, (prev, next) {
+      if (next.isLoading == false && prev?.isLoading == true) {
+        // Loading finished, show snackbar if needed
+      }
+    });
 
-## References
+    return Stack(
+      children: [
+        ListView.builder(
+          itemCount: cartState.items.length,
+          itemBuilder: (context, index) {
+            final item = cartState.items[index];
+            return CartItemTile(
+              item: item,
+              onRemove: () => ref.read(cartProvider.notifier).removeItem(item.id),
+            );
+          },
+        ),
+        if (cartState.isLoading) const CircularProgressIndicator(),
+      ],
+    );
+  }
+}
+```
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+---
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+## BLoC Pattern
 
-### Tools
-- Development tools for flutter-development
-- Testing and validation tools
-- Monitoring and observability tools
+```dart
+// Events
+abstract class AuthEvent {}
+class LoginRequested extends AuthEvent {
+  final String email;
+  final String password;
+  LoginRequested({required this.email, required this.password});
+}
+class LogoutRequested extends AuthEvent {}
+
+// States
+abstract class AuthState {}
+class AuthInitial extends AuthState {}
+class AuthLoading extends AuthState {}
+class AuthAuthenticated extends AuthState { final User user; AuthAuthenticated(this.user); }
+class AuthError extends AuthState { final String message; AuthError(this.message); }
+
+// BLoC
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  AuthBloc(this._authRepository) : super(AuthInitial()) {
+    on<LoginRequested>(_onLoginRequested);
+    on<LogoutRequested>(_onLogoutRequested);
+  }
+
+  final AuthRepository _authRepository;
+
+  Future<void> _onLoginRequested(
+    LoginRequested event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final user = await _authRepository.login(event.email, event.password);
+      emit(AuthAuthenticated(user));
+    } on AuthException catch (e) {
+      emit(AuthError(e.message));
+    }
+  }
+
+  Future<void> _onLogoutRequested(
+    LogoutRequested event, Emitter<AuthState> emit) async {
+    await _authRepository.logout();
+    emit(AuthInitial());
+  }
+}
+```
+
+### BLoC in Widget
+```dart
+class LoginScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthAuthenticated) {
+          Navigator.of(context).pushReplacementNamed('/home');
+        } else if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Column(
+          children: [
+            if (state is AuthLoading) const LinearProgressIndicator(),
+            LoginForm(
+              onSubmit: (email, password) {
+                context.read<AuthBloc>().add(
+                  LoginRequested(email: email, password: password),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+```
+
+---
+
+## CustomPainter
+
+```dart
+class WaveformPainter extends CustomPainter {
+  final List<double> amplitudes;
+  final Color color;
+
+  WaveformPainter({required this.amplitudes, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final path = Path();
+    final stepX = size.width / (amplitudes.length - 1);
+
+    for (int i = 0; i < amplitudes.length; i++) {
+      final x = i * stepX;
+      final y = size.height / 2 - amplitudes[i] * size.height / 2;
+
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        final prevX = (i - 1) * stepX;
+        final prevY = size.height / 2 - amplitudes[i - 1] * size.height / 2;
+        final controlX = (prevX + x) / 2;
+        path.cubicTo(controlX, prevY, controlX, y, x, y);
+      }
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(WaveformPainter old) =>
+      old.amplitudes != amplitudes || old.color != color;
+}
+
+// Usage
+CustomPaint(
+  painter: WaveformPainter(amplitudes: samples, color: Colors.blue),
+  size: const Size(double.infinity, 80),
+)
+```
+
+---
+
+## Isolate for Heavy Work
+
+```dart
+import 'dart:isolate';
+import 'package:flutter/foundation.dart';
+
+// Simple case: use compute()
+Future<List<ProcessedItem>> processItems(List<RawItem> rawItems) async {
+  return compute(_processInBackground, rawItems);
+}
+
+List<ProcessedItem> _processInBackground(List<RawItem> rawItems) {
+  // Runs in separate isolate — no UI thread blocking
+  return rawItems.map((item) => ProcessedItem.from(item)).toList();
+}
+
+// Complex case: long-lived isolate with bidirectional communication
+Future<void> startBackgroundWorker() async {
+  final receivePort = ReceivePort();
+  await Isolate.spawn(_workerIsolate, receivePort.sendPort);
+
+  receivePort.listen((message) {
+    if (message is SendPort) {
+      // Store sendPort to communicate back to isolate
+    } else if (message is WorkResult) {
+      // Handle result
+    }
+  });
+}
+```
+
+---
+
+## Performance: Avoiding Unnecessary Rebuilds
+
+```dart
+// Bad: rebuilds entire widget tree
+Consumer(
+  builder: (context, ref, child) {
+    final entireState = ref.watch(bigStateProvider);
+    return ExpensiveWidget(value: entireState.oneField);
+  },
+)
+
+// Good: watch only the specific value needed
+Consumer(
+  builder: (context, ref, child) {
+    final oneField = ref.watch(bigStateProvider.select((s) => s.oneField));
+    return ExpensiveWidget(value: oneField);
+  },
+)
+
+// Good: const widgets skip rebuild entirely
+const Padding(
+  padding: EdgeInsets.all(16),
+  child: Text('Static label'),
+)
+
+// Good: RepaintBoundary isolates expensive CustomPaint
+RepaintBoundary(
+  child: CustomPaint(painter: ComplexChartPainter(data: data)),
+)
+```

@@ -1,87 +1,79 @@
 # /flutter
 
-A quick-access command for flutter-development workflows in Claude Code.
+Flutter widget creation, state management, custom painting, and performance optimization.
 
 ## Trigger
 
 `/flutter [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing flutter-development implementation
-- `generate` - Generate new flutter-development artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for flutter-development artifacts
+- `create` - Scaffold a new widget with appropriate state management
+- `state` - Implement or migrate state management (Riverpod, BLoC)
+- `paint` - Implement a CustomPainter for a described visual effect
+- `optimize` - Profile and fix rebuild/render performance issues
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--riverpod` - Use Riverpod (default for new code)
+- `--bloc` - Use BLoC pattern
+- `--provider` - Use Provider (legacy)
+- `--feature <name>` - Feature context for the implementation
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of flutter-development artifacts
-- Determine applicable standards and conventions
+### create
+1. Determine state requirements (stateless vs stateful vs state-managed)
+2. Scaffold widget with appropriate base class
+3. Add `const` constructor and key parameter
+4. Wire to state provider if needed
+5. Include basic widget tests
 
-### Step 2: Analysis
-- Evaluate against flutter-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### state
+Output complete state implementation:
+- State class (immutable, with `copyWith`)
+- Notifier/Cubit/BLoC with methods
+- Provider definition
+- Usage in `ConsumerWidget` or `BlocBuilder`
+- Provider scope setup in `main.dart`
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### paint
+1. Describe the visual
+2. Output `CustomPainter` with `paint()` implementation
+3. Include `shouldRepaint()` — only return true when relevant data changes
+4. Wrap usage in `RepaintBoundary` if animated
+5. Include size and constraints guidance
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### optimize
+Analyze provided widget tree and output:
+- Identified rebuild causes (missing `const`, large `ref.watch` scope)
+- Add `select()` to narrow watched state
+- Move `const` constructors to eligible widgets
+- Replace `Column` + `map()` with `ListView.builder` for lists
+- Add `RepaintBoundary` where appropriate
 
-## Output
+## Output Format
 
-### Success
-```
-## Flutter Development - [Action] Complete
-
-### Changes Made
-- [List of changes]
-
-### Validation
-- [Checks passed]
-
-### Next Steps
-- [Recommended follow-up actions]
-```
-
-### Error
-```
-## Flutter Development - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+```dart
+// Widget code follows Flutter conventions:
+// - Named constructors with key parameter
+// - const where applicable
+// - Separate state/logic from presentation
+// - No business logic in build()
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/flutter analyze
+# Create a stateful counter widget with Riverpod
+/flutter create --riverpod --feature counter
 
-# Generate new artifacts
-/flutter generate --context ./src
+# Implement auth state with BLoC
+/flutter state --bloc --feature auth
 
-# Validate against best practices
-/flutter validate --verbose
+# Paint a circular progress indicator with custom style
+/flutter paint --feature circular-timer
 
-# Generate documentation
-/flutter document --format markdown
+# Fix slow list scrolling
+/flutter optimize --feature product-list
 ```

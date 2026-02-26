@@ -1,88 +1,294 @@
-# Swift Ios Patterns
+# Swift iOS Patterns
 
-A comprehensive pattern library and knowledge base for swift-ios.
+## Swift Concurrency: Actor + AsyncStream
 
-## Knowledge Base
+```swift
+// Actor-based cache with AsyncStream for live updates
+actor ProductCache {
+    private var products: [String: Product] = [:]
+    private var continuations: [UUID: AsyncStream<[Product]>.Continuation] = [:]
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern swift-ios
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for swift-ios
+    func store(_ product: Product) {
+        products[product.id] = product
+        broadcast()
+    }
 
-### Architecture Principles
-- Separation of concerns within swift-ios implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+    func observe() -> AsyncStream<[Product]> {
+        let id = UUID()
+        return AsyncStream { continuation in
+            // Emit current state immediately
+            continuation.yield(Array(products.values))
+            continuations[id] = continuation
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+            continuation.onTermination = { [id] _ in
+                Task { await self.removeContinuation(id: id) }
+            }
+        }
+    }
 
-## Patterns
+    private func removeContinuation(id: UUID) {
+        continuations.removeValue(forKey: id)
+    }
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+    private func broadcast() {
+        let all = Array(products.values)
+        continuations.values.forEach { $0.yield(all) }
+    }
+}
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+// Usage in ViewModel
+@MainActor
+class ProductViewModel: ObservableObject {
+    @Published var products: [Product] = []
+    private let cache: ProductCache
+    private var observationTask: Task<Void, Never>?
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+    init(cache: ProductCache) {
+        self.cache = cache
+        startObserving()
+    }
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+    private func startObserving() {
+        observationTask = Task {
+            for await updatedProducts in await cache.observe() {
+                self.products = updatedProducts.sorted(by: { $0.name < $1.name })
+            }
+        }
+    }
 
-## Anti-Patterns
+    func loadProducts() async {
+        // Parallel fetches
+        async let featured = APIClient.shared.fetchFeatured()
+        async let recent = APIClient.shared.fetchRecent()
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+        let (featuredResult, recentResult) = try? await (featured, recent) ?? ([], [])
+        for product in featuredResult + recentResult {
+            await cache.store(product)
+        }
+    }
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+    deinit { observationTask?.cancel() }
+}
+```
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+---
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+## SwiftUI: PreferenceKey for Child-to-Parent
 
-## References
+```swift
+// Custom PreferenceKey to bubble up tab badge counts
+struct BadgeCountPreferenceKey: PreferenceKey {
+    static var defaultValue: Int = 0
+    static func reduce(value: inout Int, nextValue: () -> Int) {
+        value += nextValue()
+    }
+}
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+// Child view reports its badge count
+struct CartTabView: View {
+    @StateObject var cart: CartViewModel
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+    var body: some View {
+        CartListView(cart: cart)
+            .preference(key: BadgeCountPreferenceKey.self, value: cart.itemCount)
+    }
+}
 
-### Tools
-- Development tools for swift-ios
-- Testing and validation tools
-- Monitoring and observability tools
+// Parent collects and uses it
+struct RootTabView: View {
+    @State private var cartBadge = 0
+
+    var body: some View {
+        TabView {
+            CartTabView(cart: cartViewModel)
+                .tabItem { Label("Cart", systemImage: "cart") }
+                .badge(cartBadge)
+        }
+        .onPreferenceChange(BadgeCountPreferenceKey.self) { count in
+            cartBadge = count
+        }
+    }
+}
+```
+
+---
+
+## SwiftUI: Custom Layout Protocol
+
+```swift
+// Grid layout that wraps tags to new lines
+struct FlowLayout: Layout {
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) -> CGSize {
+        let width = proposal.width ?? .infinity
+        var height: CGFloat = 0
+        var rowWidth: CGFloat = 0
+        var rowHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if rowWidth + size.width > width && rowWidth > 0 {
+                height += rowHeight + spacing
+                rowWidth = 0
+                rowHeight = 0
+            }
+            rowWidth += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+        return CGSize(width: width, height: height + rowHeight)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) {
+        var x = bounds.minX
+        var y = bounds.minY
+        var rowHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x + size.width > bounds.maxX && x > bounds.minX {
+                y += rowHeight + spacing
+                x = bounds.minX
+                rowHeight = 0
+            }
+            subview.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+    }
+}
+
+// Usage
+FlowLayout(spacing: 6) {
+    ForEach(tags, id: \.self) { tag in
+        TagChip(label: tag)
+    }
+}
+```
+
+---
+
+## UIViewRepresentable: UITextView with Attributed Text
+
+```swift
+struct AttributedTextEditor: UIViewRepresentable {
+    @Binding var attributedText: NSAttributedString
+    var onTextChange: ((NSAttributedString) -> Void)?
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.delegate = context.coordinator
+        textView.font = UIFont.preferredFont(forTextStyle: .body)
+        textView.isScrollEnabled = false
+        return textView
+    }
+
+    func updateUIView(_ textView: UITextView, context: Context) {
+        // Avoid recursive updates
+        if textView.attributedText != attributedText {
+            textView.attributedText = attributedText
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UITextViewDelegate {
+        var parent: AttributedTextEditor
+
+        init(_ parent: AttributedTextEditor) {
+            self.parent = parent
+        }
+
+        func textViewDidChange(_ textView: UITextView) {
+            parent.attributedText = textView.attributedText
+            parent.onTextChange?(textView.attributedText)
+        }
+    }
+}
+```
+
+---
+
+## Combine: Search with Debounce
+
+```swift
+@MainActor
+class SearchViewModel: ObservableObject {
+    @Published var query: String = ""
+    @Published var results: [Product] = []
+    @Published var isSearching: Bool = false
+
+    private var cancellables = Set<AnyCancellable>()
+
+    init(api: ProductAPI) {
+        $query
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .filter { !$0.isEmpty }
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.isSearching = true
+            })
+            .flatMap { query in
+                api.search(query: query)
+                    .catch { _ in Just([]) }           // Swallow errors for search
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] products in
+                self?.results = products
+                self?.isSearching = false
+            }
+            .store(in: &cancellables)
+    }
+}
+```
+
+---
+
+## @Observable + SwiftData (iOS 17+)
+
+```swift
+import SwiftData
+
+@Model
+class Task {
+    var id: UUID = UUID()
+    var title: String
+    var completed: Bool = false
+    var createdAt: Date = Date()
+
+    init(title: String) {
+        self.title = title
+    }
+}
+
+// SwiftUI view with @Query
+struct TaskListView: View {
+    @Query(sort: \Task.createdAt, order: .reverse) private var tasks: [Task]
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        List(tasks) { task in
+            TaskRow(task: task)
+        }
+        .toolbar {
+            Button("Add") {
+                let task = Task(title: "New Task")
+                modelContext.insert(task)
+            }
+        }
+    }
+}
+
+// App setup
+@main
+struct MyApp: App {
+    var body: some Scene {
+        WindowGroup {
+            TaskListView()
+        }
+        .modelContainer(for: Task.self)
+    }
+}
+```

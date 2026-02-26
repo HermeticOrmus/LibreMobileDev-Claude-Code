@@ -1,87 +1,90 @@
 # /push
 
-A quick-access command for push-notifications workflows in Claude Code.
+Implement push notification registration, handling, channels, rich content, and server-side sending.
 
 ## Trigger
 
 `/push [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing push-notifications implementation
-- `generate` - Generate new push-notifications artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for push-notifications artifacts
+- `configure` - Register for push, capture device token, setup channels
+- `send` - FCM HTTP v1 or APNs payload structure for server-side sending
+- `receive` - Handle push in foreground, background, and terminated states
+- `rich` - Rich notifications with images using service extension
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - APNs + UNUserNotificationCenter + FCM SDK
+- `--android` - FCM + FirebaseMessagingService + NotificationChannel
+- `--flutter` - firebase_messaging package
+- `--silent` - Silent push / data-only push for background fetch
+- `--channel <name>` - Android notification channel name and importance level
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of push-notifications artifacts
-- Determine applicable standards and conventions
+### configure
+1. iOS: `UNUserNotificationCenter.requestAuthorization` → `registerForRemoteNotifications`
+2. Android: `FirebaseMessagingService.onNewToken` sends token to server
+3. Create all `NotificationChannel` objects in `Application.onCreate` (Android 8+)
+4. Store token server-side with user ID; replace on `onNewToken` / token refresh
+5. Flutter: `FirebaseMessaging.instance.getToken()` + `onTokenRefresh` stream
 
-### Step 2: Analysis
-- Evaluate against push-notification-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### send
+1. FCM HTTP v1: `POST /v1/projects/{projectId}/messages:send` with OAuth 2.0 service account token
+2. APNs JWT: sign with `.p8` key using ES256; `iss` = Team ID, `kid` = Key ID
+3. Set `apns.channel_id` for Android and `apns.payload.aps` for iOS in same FCM payload
+4. Use `data` map (not `notification`) for silent push — always delivered, never shown by OS
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### receive
+1. iOS foreground: implement `willPresent` returning `.banner` to show notification
+2. iOS tap: implement `didReceive`, extract `userInfo`, route to deep link
+3. Android foreground: `onMessageReceived` → build `NotificationCompat` and call `notify()`
+4. Android tap from killed state: check `intent.extras` in `MainActivity.onCreate`
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### rich
+1. Enable `mutable-content: 1` in APNs payload
+2. Create `UNNotificationServiceExtension` target in Xcode
+3. Download image in extension within 30s; attach via `UNNotificationAttachment`
+4. Call `contentHandler(bestAttemptContent)` — must be called before time expires
+5. Android: download image in `onMessageReceived`, set as `BigPictureStyle`
 
 ## Output
 
-### Success
 ```
-## Push Notifications - [Action] Complete
+## Push Notification Implementation
 
-### Changes Made
-- [List of changes]
+### Permission + Registration
+[Token capture and server registration code]
 
-### Validation
-- [Checks passed]
+### Channel Setup
+[Android NotificationChannel definitions]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### Message Handling
+[Foreground + background + tap handlers]
 
-### Error
-```
-## Push Notifications - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Server Payload
+[FCM HTTP v1 JSON structure]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/push analyze
+# iOS full push setup with FCM
+/push configure --ios
 
-# Generate new artifacts
-/push generate --context ./src
+# Android channels + message handling
+/push configure --android
 
-# Validate against best practices
-/push validate --verbose
+# FCM HTTP v1 payload for order notification
+/push send --android
 
-# Generate documentation
-/push document --format markdown
+# iOS rich push with image attachment
+/push rich --ios
+
+# Silent background push for data refresh
+/push configure --ios --silent
+
+# Flutter firebase_messaging setup
+/push configure --flutter
 ```

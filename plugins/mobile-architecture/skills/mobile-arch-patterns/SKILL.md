@@ -1,88 +1,240 @@
-# Mobile Arch Patterns
+# Mobile Architecture Patterns
 
-A comprehensive pattern library and knowledge base for mobile-architecture.
+## Clean Architecture: Domain Layer (Shared Interface)
 
-## Knowledge Base
+```kotlin
+// Domain — pure Kotlin, no Android/iOS imports
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern mobile-architecture
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for mobile-architecture
+// Entity
+data class Product(
+    val id: String,
+    val name: String,
+    val price: Double,
+    val stockCount: Int,
+)
 
-### Architecture Principles
-- Separation of concerns within mobile-architecture implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+// Repository interface (in domain, implemented in data)
+interface ProductRepository {
+    fun observeProducts(): Flow<List<Product>>
+    suspend fun getProduct(id: String): Result<Product>
+    suspend fun refresh(): Result<Unit>
+}
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+// UseCase — single responsibility, depends on interface not implementation
+class GetProductsUseCase @Inject constructor(
+    private val repository: ProductRepository
+) {
+    operator fun invoke(): Flow<List<Product>> =
+        repository.observeProducts()
+}
 
-## Patterns
+class GetProductDetailUseCase @Inject constructor(
+    private val repository: ProductRepository
+) {
+    suspend operator fun invoke(id: String): Result<Product> =
+        repository.getProduct(id)
+}
+```
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+### Data Layer Implementation
+```kotlin
+// data module — implements domain interfaces
+class ProductRepositoryImpl @Inject constructor(
+    private val remote: ProductRemoteDataSource,
+    private val local: ProductLocalDataSource,
+) : ProductRepository {
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+    override fun observeProducts(): Flow<List<Product>> =
+        local.observeAll()
+            .map { entities -> entities.map { it.toDomain() } }
+            .flowOn(Dispatchers.IO)
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+    override suspend fun getProduct(id: String): Result<Product> =
+        runCatching {
+            local.getById(id)?.toDomain()
+                ?: remote.fetchProduct(id).also { local.insert(it.toEntity()) }.toDomain()
+        }
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+    override suspend fun refresh(): Result<Unit> = runCatching {
+        val products = remote.fetchAll()
+        local.replaceAll(products.map { it.toEntity() })
+    }
+}
+```
 
-## Anti-Patterns
+---
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+## iOS: Coordinator Pattern
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+```swift
+protocol Coordinator: AnyObject {
+    var childCoordinators: [Coordinator] { get set }
+    var navigationController: UINavigationController { get }
+    func start()
+}
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+// App-level coordinator
+class AppCoordinator: Coordinator {
+    var childCoordinators: [Coordinator] = []
+    let navigationController: UINavigationController
+    private let authService: AuthService
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+    init(navigationController: UINavigationController, authService: AuthService) {
+        self.navigationController = navigationController
+        self.authService = authService
+    }
 
-## References
+    func start() {
+        if authService.isLoggedIn {
+            showHome()
+        } else {
+            showLogin()
+        }
+    }
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+    private func showLogin() {
+        let coordinator = LoginCoordinator(navigationController: navigationController)
+        coordinator.delegate = self
+        childCoordinators.append(coordinator)
+        coordinator.start()
+    }
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+    private func showHome() {
+        let coordinator = HomeCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
+    }
+}
 
-### Tools
-- Development tools for mobile-architecture
-- Testing and validation tools
-- Monitoring and observability tools
+extension AppCoordinator: LoginCoordinatorDelegate {
+    func loginDidComplete(_ coordinator: LoginCoordinator) {
+        childCoordinators.removeAll { $0 === coordinator }
+        showHome()
+    }
+}
+
+// Feature coordinator
+class LoginCoordinator: Coordinator {
+    var childCoordinators: [Coordinator] = []
+    let navigationController: UINavigationController
+    weak var delegate: LoginCoordinatorDelegate?
+
+    init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
+    }
+
+    func start() {
+        let vm = LoginViewModel(authService: AuthService.shared)
+        let vc = LoginViewController(viewModel: vm)
+        vm.coordinator = self
+        navigationController.setViewControllers([vc], animated: false)
+    }
+
+    func showForgotPassword() {
+        let vc = ForgotPasswordViewController()
+        navigationController.pushViewController(vc, animated: true)
+    }
+
+    func loginCompleted() {
+        delegate?.loginDidComplete(self)
+    }
+}
+
+protocol LoginCoordinatorDelegate: AnyObject {
+    func loginDidComplete(_ coordinator: LoginCoordinator)
+}
+```
+
+---
+
+## MVI: Reducer Pattern
+
+```kotlin
+// MVI with pure reducer
+data class CheckoutUiState(
+    val items: List<CartItem> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val orderConfirmed: Boolean = false,
+)
+
+sealed class CheckoutIntent {
+    object LoadCart : CheckoutIntent()
+    data class RemoveItem(val itemId: String) : CheckoutIntent()
+    object PlaceOrder : CheckoutIntent()
+    object DismissError : CheckoutIntent()
+}
+
+sealed class CheckoutEffect {
+    object NavigateToConfirmation : CheckoutEffect()
+    data class ShowError(val message: String) : CheckoutEffect()
+}
+
+class CheckoutViewModel @Inject constructor(
+    private val getCartUseCase: GetCartUseCase,
+    private val placeOrderUseCase: PlaceOrderUseCase
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(CheckoutUiState())
+    val state = _state.asStateFlow()
+
+    private val _effects = Channel<CheckoutEffect>()
+    val effects = _effects.receiveAsFlow()
+
+    fun processIntent(intent: CheckoutIntent) {
+        when (intent) {
+            is CheckoutIntent.LoadCart -> loadCart()
+            is CheckoutIntent.RemoveItem -> removeItem(intent.itemId)
+            is CheckoutIntent.PlaceOrder -> placeOrder()
+            is CheckoutIntent.DismissError -> _state.update { it.copy(errorMessage = null) }
+        }
+    }
+
+    private fun loadCart() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            getCartUseCase().collect { items ->
+                _state.update { it.copy(items = items, isLoading = false) }
+            }
+        }
+    }
+
+    private fun placeOrder() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            placeOrderUseCase(_state.value.items)
+                .onSuccess {
+                    _state.update { it.copy(isLoading = false, orderConfirmed = true) }
+                    _effects.send(CheckoutEffect.NavigateToConfirmation)
+                }
+                .onFailure { error ->
+                    _state.update { it.copy(isLoading = false, errorMessage = error.message) }
+                }
+        }
+    }
+}
+```
+
+---
+
+## Android Navigation: SafeArgs
+
+```kotlin
+// NavGraph (nav_graph.xml)
+// <fragment android:id="@+id/productListFragment" ...>
+//   <action android:id="@+id/action_list_to_detail"
+//           app:destination="@id/productDetailFragment" />
+// </fragment>
+// <fragment android:id="@+id/productDetailFragment">
+//   <argument android:name="productId" app:argType="string" />
+// </fragment>
+
+// Navigate with SafeArgs (type-safe)
+val action = ProductListFragmentDirections
+    .actionListToDetail(productId = "SKU-123")
+findNavController().navigate(action)
+
+// Receive in destination
+val args: ProductDetailFragmentArgs by navArgs()
+val productId = args.productId
+```

@@ -1,46 +1,50 @@
 # Location Services
 
-GPS, geofencing, maps, location tracking, geocoding
+iOS CoreLocation, Android FusedLocationProvider, Flutter geolocator, geofencing, geocoding, MapKit/Google Maps/flutter_map.
 
 ## What's Included
 
 ### Agents
-- **Location Engineer** - Specialized agent for GPS, geofencing, maps, location tracking, geocoding
+- **location-engineer** - Expert in CLLocationManager authorization levels, FusedLocationProvider priorities, geofencing limits, reverse geocoding, MapKit clustering, battery-efficient strategies
 
 ### Commands
-- `/location` - Quick-access command for location-services workflows
+- `/location` - Configure tracking, geofencing, geocoding, and map integration
 
 ### Skills
-- **Location Patterns** - Pattern library and knowledge base for location-services
+- **location-patterns** - CoreLocation Swift, FusedLocation Kotlin, Flutter geolocator, iOS geofencing, Android geofencing, flutter_map, battery impact table
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Basic location setup
+/location configure --ios --accuracy hundred-meters
 
-## Usage Examples
+# Background geofencing
+/location geofence --ios --background
 
-```
-# Use the command directly
-/location analyze
-
-# Use the command with specific input
-/location generate --context "your project"
-
-# Reference patterns from the skill
-"Apply location-patterns patterns to this implementation"
+# Cross-platform map
+/location map --flutter
 ```
 
-## Key Patterns
+## Permission Requirements
 
-- Follow established conventions for location-services
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Feature | iOS | Android |
+|---------|-----|---------|
+| Foreground location | `whenInUse` | `ACCESS_FINE_LOCATION` |
+| Background location | `always` | `ACCESS_BACKGROUND_LOCATION` (separate request) |
+| Geofencing | `always` | `ACCESS_BACKGROUND_LOCATION` |
 
-## Related Plugins
+## Battery Tiers
 
-Check the main README for related plugins in this collection.
+| Tier | Accuracy | Use Case |
+|------|----------|----------|
+| Significant change | ~500m | "Notify when near home" |
+| Balanced | ~100m | Store locator, check-in |
+| High accuracy | ~5m | Run tracking, navigation |
+| Best for navigation | ~3m | Turn-by-turn navigation |
+
+## Maps Library Comparison
+
+- MapKit — iOS only, free, best native integration
+- Google Maps SDK — iOS + Android, requires API key and billing
+- flutter_map + OpenStreetMap — cross-platform, no API key, open data

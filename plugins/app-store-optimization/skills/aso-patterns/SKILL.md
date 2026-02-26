@@ -1,88 +1,156 @@
-# Aso Patterns
+# ASO Patterns
 
-A comprehensive pattern library and knowledge base for app-store-optimization.
+## iOS Keyword Field Optimization
 
-## Knowledge Base
+### Rules
+- 100 characters total, comma-separated, no spaces after commas
+- Never repeat words already in title or subtitle
+- Plurals count as separate index terms — include both if space allows
+- No competitor brand names (Apple rejects listings for this)
+- Special characters and spaces do not index — avoid them
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern app-store-optimization
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for app-store-optimization
+### Example: Fitness App Keyword Field
+```
+workout,gym,exercise,training,calories,cardio,strength,yoga,HIIT,steps,weight,diet,health,coach
+```
+Character count: 93 — leaves room to swap underperformers after ranking data accumulates.
 
-### Architecture Principles
-- Separation of concerns within app-store-optimization implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+### Title + Subtitle Framework
+```
+Title:   [Primary keyword] - [Differentiator]    (30 chars)
+         "Habit Tracker - Daily Planner"
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+Subtitle: [Secondary keyword] + [Benefit]         (30 chars)
+          "Build Routines, Reach Your Goals"
+```
 
-## Patterns
+---
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+## Google Play Description Optimization
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+### Keyword Density Strategy
+- Long description is fully indexed — work primary keyword in naturally 3-5x in 4000 chars
+- Front-load: first 3 lines visible before "Read more" fold — treat as ad copy
+- Structured formatting: use line breaks, bullet points, ALL CAPS section headers (no HTML)
+- Keyword placement: title > short description > first paragraph > rest of description
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+### Opening 3-Line Formula
+```
+[Primary keyword] that [does unique thing]. [Target user] use [App Name] to [outcome 1],
+[outcome 2], and [outcome 3]. [Social proof or differentiator].
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+Example:
+Meditation app that fits into any schedule. Busy professionals use Calm Hour to reduce
+stress, improve sleep, and build daily mindfulness habits in just 10 minutes a day.
+Over 2 million people have transformed their mornings with Calm Hour.
+```
 
-## Anti-Patterns
+---
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+## A/B Testing Process
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+### iOS Product Page Optimization
+- Up to 3 treatment variants against default product page
+- Can test: app icon, screenshots, preview video, promotional text
+- Apple auto-splits traffic; collects until statistical significance
+- Minimum 1 week run time; 2-4 weeks recommended for low-traffic apps
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+### Google Play Experiments
+- Create via Play Console > Store Listing > Create experiment
+- Supports: icon, feature graphic, screenshots, short/long description
+- Traffic split: 10-50% to variant; remaining to original
+- Collect 500+ conversions per variant for valid results
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+### What to Test First (Priority Order)
+1. First screenshot (highest single conversion lever)
+2. App icon (affects click-through from search results)
+3. Title (small changes only — track ranking impact carefully)
+4. Short description (Android only — shown in search)
 
-## References
+---
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+## Review Request Implementation
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+### iOS (SKStoreReviewController)
+```swift
+import StoreKit
 
-### Tools
-- Development tools for app-store-optimization
-- Testing and validation tools
-- Monitoring and observability tools
+func requestReviewIfAppropriate() {
+    // Only request after positive moment
+    guard userCompletedPositiveAction else { return }
+    guard appLaunchCount > 5 else { return } // avoid asking too early
+
+    if let scene = UIApplication.shared.connectedScenes
+        .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+        SKStoreReviewController.requestReview(in: scene)
+    }
+}
+```
+
+Note: Apple controls whether the dialog actually shows. You cannot force it. Max 3 times per 365 days.
+
+### Android (In-App Review API)
+```kotlin
+import com.google.android.play.core.review.ReviewManagerFactory
+
+class ReviewHelper(private val activity: Activity) {
+    fun requestReview(onComplete: () -> Unit) {
+        val manager = ReviewManagerFactory.create(activity)
+        val request = manager.requestReviewFlow()
+
+        request.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val reviewInfo = task.result
+                val flow = manager.launchReviewFlow(activity, reviewInfo)
+                flow.addOnCompleteListener { onComplete() }
+            } else {
+                onComplete() // continue user flow even if review fails
+            }
+        }
+    }
+}
+```
+
+---
+
+## Seasonal ASO Calendar
+
+| Period | Keyword Strategy |
+|--------|-----------------|
+| Jan 1-15 | new year resolutions, goals, habits, fresh start |
+| Feb | valentine, love, gifts, couples |
+| Aug-Sep | back to school, study, organize, productivity |
+| Nov | black friday, deals, gifts, holiday |
+| Dec | christmas, new year, review, wrap up |
+
+Update keyword field and promotional text (iOS) before each season. Promotional text can be updated without resubmitting the app.
+
+---
+
+## Screenshot Size Reference
+
+### iOS
+| Device | Resolution | Required? |
+|--------|------------|-----------|
+| 6.9" iPhone | 1320x2868 | Yes (new) |
+| 6.5" iPhone | 1242x2688 | Yes |
+| 5.5" iPhone | 1242x2208 | Yes |
+| 12.9" iPad | 2048x2732 | Yes (if iPad supported) |
+
+### Android
+| Device | Resolution | Required? |
+|--------|------------|-----------|
+| Phone | 1080x1920 min | Yes |
+| 7" tablet | 1024x600 min | Recommended |
+| 10" tablet | 1280x800 min | Recommended |
+| Feature graphic | 1024x500 | Yes |
+
+---
+
+## Conversion Rate Anti-Patterns
+
+- Screenshots showing UI without context or user benefit
+- Title that is brand name only with no keywords ("MyApp" not "MyApp - Task Manager")
+- Description starting with "Welcome to MyApp" instead of value proposition
+- Not responding to negative reviews (algorithms factor in developer responsiveness)
+- Requesting review on first app launch before user has experienced value

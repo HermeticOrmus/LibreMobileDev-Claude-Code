@@ -1,46 +1,37 @@
 # Cross Platform Patterns
 
-Shared code, platform channels, conditional rendering
+Flutter platform channels, Kotlin Multiplatform Mobile, React Native New Architecture, shared code architecture.
 
 ## What's Included
 
 ### Agents
-- **Cross Platform Architect** - Specialized agent for Shared code, platform channels, conditional rendering
+- **cross-platform-architect** - Expert in Flutter MethodChannel/EventChannel, KMM expect/actual, RN TurboModules/JSI, shared repository patterns, native vs cross-platform decision making
 
 ### Commands
-- `/cross-platform` - Quick-access command for cross-platform-patterns workflows
+- `/cross-platform` - Design architecture, implement channels, set up KMM, evaluate frameworks
 
 ### Skills
-- **Cross Platform Patterns** - Pattern library and knowledge base for cross-platform-patterns
+- **cross-platform-patterns** - Flutter MethodChannel (Dart+Swift+Kotlin), EventChannel streams, KMM expect/actual, Ktor+SQLDelight shared repo, RN TurboModule spec, platform detection
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Evaluate framework for new project
+/cross-platform decide
 
-## Usage Examples
+# Implement native biometric auth in Flutter
+/cross-platform channel --flutter --feature biometrics
 
-```
-# Use the command directly
-/cross-platform analyze
-
-# Use the command with specific input
-/cross-platform generate --context "your project"
-
-# Reference patterns from the skill
-"Apply cross-platform-patterns patterns to this implementation"
+# Set up shared network layer with KMM
+/cross-platform kmp --feature network
 ```
 
-## Key Patterns
+## Framework Comparison
 
-- Follow established conventions for cross-platform-patterns
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
-
-## Related Plugins
-
-Check the main README for related plugins in this collection.
+| | Flutter | KMM | React Native |
+|---|---------|-----|--------------|
+| UI | Shared (custom widgets) | Native per platform | Shared (JS components) |
+| Business logic | Dart | Kotlin (shared) | JS/TS |
+| Native access | MethodChannel | expect/actual | TurboModules (JSI) |
+| Team fit | Any | Kotlin/Android devs | JS/Web devs |
+| Performance | Good (Skia) | Native UI = best | Good (Hermes + JSI) |

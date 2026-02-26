@@ -1,46 +1,49 @@
 # Accessibility Mobile
 
-Mobile a11y, VoiceOver, TalkBack, semantic markup
+iOS VoiceOver, Android TalkBack, Flutter Semantics, WCAG 2.1 compliance for production mobile apps.
 
 ## What's Included
 
 ### Agents
-- **Mobile A11y Engineer** - Specialized agent for Mobile a11y, VoiceOver, TalkBack, semantic markup
+- **mobile-a11y-engineer** - Specialist in UIAccessibility, Android semantics, Flutter Semantics widget, WCAG 2.1 mobile criteria, contrast ratios, touch target sizing
 
 ### Commands
-- `/mobile-a11y` - Quick-access command for accessibility-mobile workflows
+- `/mobile-a11y` - Audit, fix, test, and report on accessibility violations
 
 ### Skills
-- **Mobile A11y Patterns** - Pattern library and knowledge base for accessibility-mobile
+- **mobile-a11y-patterns** - Platform-specific patterns with Swift, Kotlin, and Dart code examples
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Audit current screen for violations
+/mobile-a11y audit --ios
 
-## Usage Examples
+# Fix all violations in a Flutter component
+/mobile-a11y fix --flutter
 
-```
-# Use the command directly
-/mobile-a11y analyze
+# Generate VoiceOver/TalkBack testing checklist
+/mobile-a11y test --all
 
-# Use the command with specific input
-/mobile-a11y generate --context "your project"
-
-# Reference patterns from the skill
-"Apply mobile-a11y-patterns patterns to this implementation"
+# Full WCAG 2.1 compliance report
+/mobile-a11y report
 ```
 
-## Key Patterns
+## Platform Coverage
 
-- Follow established conventions for accessibility-mobile
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Feature | iOS (SwiftUI/UIKit) | Android (Compose/XML) | Flutter |
+|---------|--------------------|-----------------------|---------|
+| Screen reader | VoiceOver + UIAccessibility | TalkBack + semantics{} | Semantics widget |
+| Labels | .accessibilityLabel() | contentDescription | Semantics(label:) |
+| Roles | accessibilityTraits | Role.Button etc. | button: true |
+| Live regions | UIAccessibility.post(.announcement) | accessibilityLiveRegion | SemanticsService.announce() |
+| Touch targets | 44x44pt minimum | 48x48dp minimum | 48x48dp (Material) |
 
-## Related Plugins
+## WCAG 2.1 Criteria Covered
 
-Check the main README for related plugins in this collection.
+- 1.1.1 Non-text Content (alt text for images and icons)
+- 1.3.1 Info and Relationships (semantic structure)
+- 1.4.3 Contrast Minimum (4.5:1 normal, 3:1 large text)
+- 1.4.11 Non-text Contrast (3:1 for UI components)
+- 2.5.5 Target Size (44pt iOS, 48dp Android)
+- 4.1.2 Name, Role, Value (interactive element labeling)

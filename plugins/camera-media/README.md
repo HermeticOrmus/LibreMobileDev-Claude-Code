@@ -1,46 +1,47 @@
 # Camera Media
 
-Camera APIs, photo/video capture, image processing
+iOS AVFoundation, Android CameraX/Camera2, Flutter camera, ARKit/ARCore, image/video processing.
 
 ## What's Included
 
 ### Agents
-- **Camera Engineer** - Specialized agent for Camera APIs, photo/video capture, image processing
+- **camera-engineer** - Expert in AVCaptureSession, CameraX use cases, photo/video capture, CoreImage, ML Kit Vision, ARKit, ARCore
 
 ### Commands
-- `/camera` - Quick-access command for camera-media workflows
+- `/camera` - Configure, capture, process, and AR setup across platforms
 
 ### Skills
-- **Camera Media Patterns** - Pattern library and knowledge base for camera-media
+- **camera-media-patterns** - AVCaptureSession Swift, CameraX Kotlin, Flutter camera Dart, HEIC/JPEG tradeoffs, ML Kit analysis, permission flow
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# iOS camera setup
+/camera configure --ios
 
-## Usage Examples
+# Android still photo with CameraX
+/camera capture --android
 
-```
-# Use the command directly
-/camera analyze
+# Real-time ML analysis pipeline
+/camera process --android
 
-# Use the command with specific input
-/camera generate --context "your project"
-
-# Reference patterns from the skill
-"Apply camera-media-patterns patterns to this implementation"
+# ARKit world tracking
+/camera ar --ios
 ```
 
-## Key Patterns
+## Platform API Reference
 
-- Follow established conventions for camera-media
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Feature | iOS | Android | Flutter |
+|---------|-----|---------|---------|
+| Session | AVCaptureSession | ProcessCameraProvider | CameraController |
+| Photo | AVCapturePhotoOutput | ImageCapture | takePicture() |
+| Video | AVCaptureMovieFileOutput | VideoCapture<Recorder> | startVideoRecording() |
+| ML Analysis | AVCaptureVideoDataOutput | ImageAnalysis | imageStream |
+| AR | ARKit / ARSession | ARCore / ArFragment | ar_flutter_plugin |
 
-## Related Plugins
+## Key Decisions
 
-Check the main README for related plugins in this collection.
+- CameraX preferred over Camera2 for all new Android code
+- HEIC for storage-sensitive intra-app use cases; JPEG for sharing
+- Always release camera resources in lifecycle callbacks to avoid black screen bugs
+- Never initialize `AVCaptureSession` on the main thread

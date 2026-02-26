@@ -1,88 +1,264 @@
 # Push Notification Patterns
 
-A comprehensive pattern library and knowledge base for push-notifications.
+## iOS: Full Push Setup
 
-## Knowledge Base
+```swift
+import UserNotifications
+import FirebaseMessaging
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern push-notifications
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for push-notifications
+class AppDelegate: UIResponder, UIApplicationDelegate,
+                   UNUserNotificationCenterDelegate,
+                   MessagingDelegate {
 
-### Architecture Principles
-- Separation of concerns within push-notifications implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        FirebaseApp.configure()
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+        // Request notification permission
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
 
-## Patterns
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: [.alert, .badge, .sound]
+        ) { granted, error in
+            guard granted else { return }
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+        return true
+    }
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+    // APNs token — FCM swizzles this; still useful for direct APNs
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+    // FCM token — send to your server
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let token = fcmToken else { return }
+        // Send to server only if different from stored token
+        if UserDefaults.standard.string(forKey: "fcmToken") != token {
+            UserDefaults.standard.set(token, forKey: "fcmToken")
+            Task { await PushTokenService.register(token: token) }
+        }
+    }
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+    // Foreground: show notification as banner
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                 willPresent notification: UNNotification,
+                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .badge, .sound])
+    }
 
-## Anti-Patterns
+    // Handle tap — route to correct screen
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                 didReceive response: UNNotificationResponse,
+                                 withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        DeepLinkRouter.handle(userInfo: userInfo)
+        completionHandler()
+    }
+}
+```
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+### iOS: Rich Notification Service Extension
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+```swift
+// NotificationService.swift (in separate target)
+class NotificationService: UNNotificationServiceExtension {
+    var contentHandler: ((UNNotificationContent) -> Void)?
+    var bestAttemptContent: UNMutableNotificationContent?
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+    override func didReceive(_ request: UNNotificationRequest,
+                              withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+        self.contentHandler = contentHandler
+        bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+        guard let content = bestAttemptContent,
+              let imageURLString = content.userInfo["image_url"] as? String,
+              let imageURL = URL(string: imageURLString) else {
+            contentHandler(request.content)
+            return
+        }
 
-## References
+        // Download image attachment
+        let task = URLSession.shared.downloadTask(with: imageURL) { tempURL, _, error in
+            defer { contentHandler(content) }
+            guard let tempURL else { return }
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+            let filename = imageURL.lastPathComponent
+            let destination = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(filename)
+            try? FileManager.default.moveItem(at: tempURL, to: destination)
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+            if let attachment = try? UNNotificationAttachment(identifier: "image", url: destination) {
+                content.attachments = [attachment]
+            }
+        }
+        task.resume()
+    }
 
-### Tools
-- Development tools for push-notifications
-- Testing and validation tools
-- Monitoring and observability tools
+    override func serviceExtensionTimeWillExpire() {
+        // Called if download didn't complete in time — deliver best attempt
+        if let contentHandler, let bestAttemptContent {
+            contentHandler(bestAttemptContent)
+        }
+    }
+}
+```
+
+---
+
+## Android: FCM Setup with Notification Channels
+
+```kotlin
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        FirebaseApp.initializeApp(this)
+        createNotificationChannels()
+    }
+
+    private fun createNotificationChannels() {
+        val channels = listOf(
+            NotificationChannel(
+                "orders",
+                "Order Updates",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Your order status updates"
+                enableVibration(true)
+            },
+            NotificationChannel(
+                "promotions",
+                "Promotions",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Deals and promotions"
+            }
+        )
+
+        val manager = getSystemService(NotificationManager::class.java)
+        channels.forEach { manager.createNotificationChannel(it) }
+    }
+}
+
+class MyFirebaseMessagingService : FirebaseMessagingService() {
+
+    // Token refresh — send new token to server
+    override fun onNewToken(token: String) {
+        lifecycleScope.launch {
+            PushTokenRepository.register(token)
+        }
+    }
+
+    // Foreground push AND data-only push (background goes to system tray)
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        val data = remoteMessage.data
+        val channelId = data["channel_id"] ?: "orders"
+
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setContentTitle(remoteMessage.notification?.title ?: data["title"])
+            .setContentText(remoteMessage.notification?.body ?: data["body"])
+            .setSmallIcon(R.drawable.ic_notification)
+            .setAutoCancel(true)
+            .setContentIntent(buildDeepLinkIntent(data))
+            .build()
+
+        NotificationManagerCompat.from(this)
+            .notify(data["notification_id"]?.toInt() ?: 0, notification)
+    }
+
+    private fun buildDeepLinkIntent(data: Map<String, String>): PendingIntent {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            data["order_id"]?.let { putExtra("order_id", it) }
+        }
+        return PendingIntent.getActivity(this, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    }
+}
+```
+
+### Handle Tap from Terminated State (Android)
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        handlePushIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handlePushIntent(intent)
+    }
+
+    private fun handlePushIntent(intent: Intent) {
+        val orderId = intent.getStringExtra("order_id") ?: return
+        navController.navigate(OrderDetailDestination(orderId))
+    }
+}
+```
+
+---
+
+## FCM HTTP v1 Payload (Server Side)
+
+```json
+{
+  "message": {
+    "token": "device_registration_token",
+    "notification": {
+      "title": "Your order shipped",
+      "body": "Order #1234 is on its way"
+    },
+    "data": {
+      "order_id": "1234",
+      "channel_id": "orders",
+      "deep_link": "myapp://orders/1234"
+    },
+    "android": {
+      "priority": "high",
+      "notification": {
+        "channel_id": "orders",
+        "notification_priority": "PRIORITY_HIGH"
+      }
+    },
+    "apns": {
+      "payload": {
+        "aps": {
+          "alert": {
+            "title": "Your order shipped",
+            "body": "Order #1234 is on its way"
+          },
+          "badge": 1,
+          "sound": "default",
+          "mutable-content": 1
+        },
+        "order_id": "1234"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Notification State Handling Summary
+
+```
+Foreground:
+  iOS → UNUserNotificationCenterDelegate.willPresent → return [.banner, .sound]
+  Android → FirebaseMessagingService.onMessageReceived → build + show NotificationCompat
+
+Background / Tray tap:
+  iOS → UNUserNotificationCenterDelegate.didReceive → route via DeepLinkRouter
+  Android → MainActivity.onNewIntent or onCreate → read intent extras
+
+Silent push (content-available: 1):
+  iOS → AppDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:)
+  Android → onMessageReceived (data-only message, no notification key)
+```

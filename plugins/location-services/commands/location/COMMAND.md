@@ -1,87 +1,86 @@
 # /location
 
-A quick-access command for location-services workflows in Claude Code.
+Configure location tracking, geofencing, geocoding, and maps integration.
 
 ## Trigger
 
 `/location [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing location-services implementation
-- `generate` - Generate new location-services artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for location-services artifacts
+- `configure` - Set up CLLocationManager / FusedLocationProvider / geolocator
+- `track` - Implement real-time location tracking with appropriate accuracy
+- `geofence` - Add geofence with entry/exit triggers
+- `map` - Integrate MapKit / Google Maps / flutter_map
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - CoreLocation / MapKit focus
+- `--android` - FusedLocationProvider / Google Maps focus
+- `--flutter` - geolocator / flutter_map focus
+- `--accuracy <tier>` - `best`, `hundred-meters`, `kilometer`, `significant`
+- `--background` - Include background location (always authorization)
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of location-services artifacts
-- Determine applicable standards and conventions
+### configure
+1. Select authorization level based on use case
+2. Output Info.plist keys (iOS) or AndroidManifest permissions (Android)
+3. Output `CLLocationManager` / `FusedLocationProviderClient` setup
+4. Include permission request flow with denial handling
 
-### Step 2: Analysis
-- Evaluate against location-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### track
+1. Determine accuracy tier appropriate for use case
+2. Set `distanceFilter` / `setMinUpdateDistanceMeters` to avoid unnecessary updates
+3. Output start/stop tracking code tied to lifecycle
+4. Include location age/accuracy validation (filter stale/inaccurate fixes)
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### geofence
+1. Output geofence setup with center, radius, and transition types
+2. Include max count caveat (20 iOS, 100 Android)
+3. Output geofence event handler
+4. Note: requires `always` authorization on iOS
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### map
+1. Select map library (MapKit for iOS-only, Google Maps SDK for both, flutter_map for cross-platform without API key)
+2. Output map setup with annotation/marker
+3. Include camera positioning to user location
+4. Include clustering recommendation for many markers
 
 ## Output
 
-### Success
 ```
-## Location Services - [Action] Complete
+## Location Configuration
 
-### Changes Made
-- [List of changes]
+### Use Case: [description]
+### Authorization: [whenInUse/always + reason]
+### Accuracy: [tier + battery impact]
 
-### Validation
-- [Checks passed]
+## Setup Code
+[Platform-specific location manager setup]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+## Permission Flow
+[Request code + denial handling]
 
-### Error
-```
-## Location Services - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+## Update Handler
+[Location received callback]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/location analyze
+# Configure basic location tracking for iOS
+/location configure --ios --accuracy hundred-meters
 
-# Generate new artifacts
-/location generate --context ./src
+# Real-time navigation tracking
+/location track --android --accuracy best
 
-# Validate against best practices
-/location validate --verbose
+# Geofence for store arrival detection (iOS)
+/location geofence --ios --background
 
-# Generate documentation
-/location document --format markdown
+# MapKit integration with annotations
+/location map --ios
+
+# Cross-platform map with flutter_map (no Google API key)
+/location map --flutter
 ```

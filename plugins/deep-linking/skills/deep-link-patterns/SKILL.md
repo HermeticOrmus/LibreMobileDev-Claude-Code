@@ -1,88 +1,269 @@
 # Deep Link Patterns
 
-A comprehensive pattern library and knowledge base for deep-linking.
+## apple-app-site-association (AASA)
 
-## Knowledge Base
+### Format (iOS 13+ with components)
+```json
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["TEAMID1234.com.myapp.ios"],
+        "components": [
+          {
+            "/": "/product/*",
+            "comment": "Product detail pages"
+          },
+          {
+            "/": "/user/*/settings",
+            "comment": "User settings with wildcard"
+          },
+          {
+            "/": "/checkout",
+            "?": { "ref": "?" },
+            "comment": "Checkout with optional ref param"
+          },
+          {
+            "/": "/admin/*",
+            "exclude": true,
+            "comment": "Exclude admin paths"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["TEAMID1234.com.myapp.ios"]
+  }
+}
+```
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern deep-linking
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for deep-linking
+Server requirements:
+- Served at exactly `https://yourdomain.com/.well-known/apple-app-site-association`
+- No redirect (Apple's crawler doesn't follow redirects)
+- `Content-Type: application/json`
+- No `.json` file extension
 
-### Architecture Principles
-- Separation of concerns within deep-linking implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+### iOS Entitlement (Xcode)
+```xml
+<!-- In MyApp.entitlements -->
+<key>com.apple.developer.associated-domains</key>
+<array>
+  <string>applinks:yourdomain.com</string>
+  <string>applinks:www.yourdomain.com</string>
+</array>
+```
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+### iOS Handling (SwiftUI)
+```swift
+@main
+struct MyApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .onOpenURL { url in
+                    DeepLinkRouter.handle(url)
+                }
+        }
+    }
+}
 
-## Patterns
+class DeepLinkRouter {
+    static func handle(_ url: URL) {
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        let pathComponents = url.pathComponents
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+        switch pathComponents.dropFirst().first {
+        case "product":
+            let productId = pathComponents.dropFirst(2).first
+            // Navigate to product detail
+        case "user":
+            // Handle user profile
+        default:
+            // Fallback: open home screen
+            break
+        }
+    }
+}
+```
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+---
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+## assetlinks.json (Android)
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+```json
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.myapp.android",
+      "sha256_cert_fingerprints": [
+        "AB:CD:EF:..."
+      ]
+    }
+  }
+]
+```
 
-## Anti-Patterns
+Get SHA-256 fingerprint:
+```bash
+keytool -list -v -keystore release.keystore -alias mykey -storepass password \
+  | grep SHA256
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+# Or from Play Console: Setup > App integrity > App signing certificate
+```
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+### AndroidManifest.xml Intent Filter
+```xml
+<activity android:name=".MainActivity">
+    <!-- Standard launcher intent -->
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+    </intent-filter>
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+    <!-- App Links (verified HTTPS) -->
+    <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data
+            android:scheme="https"
+            android:host="yourdomain.com"
+            android:pathPrefix="/product"/>
+    </intent-filter>
+</activity>
+```
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+### Android Handling (Kotlin)
+```kotlin
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        handleDeepLink(intent)
+    }
 
-## References
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let { handleDeepLink(it) }
+    }
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+    private fun handleDeepLink(intent: Intent) {
+        val uri = intent.data ?: return
+        if (intent.action != Intent.ACTION_VIEW) return
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+        val pathSegments = uri.pathSegments
+        when (pathSegments.firstOrNull()) {
+            "product" -> {
+                val productId = pathSegments.getOrNull(1)
+                navigateToProduct(productId)
+            }
+            "user" -> navigateToProfile(uri.lastPathSegment)
+            else -> { /* Home screen */ }
+        }
+    }
+}
+```
 
-### Tools
-- Development tools for deep-linking
-- Testing and validation tools
-- Monitoring and observability tools
+---
+
+## Flutter Deep Links with go_router
+
+```dart
+// pubspec.yaml
+// dependencies:
+//   go_router: ^13.0.0
+//   app_links: ^6.0.0
+
+final router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
+    GoRoute(
+      path: '/product/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return ProductDetailScreen(productId: id);
+      },
+    ),
+    GoRoute(
+      path: '/user/:id/settings',
+      builder: (context, state) => UserSettingsScreen(
+        userId: state.pathParameters['id']!,
+      ),
+    ),
+  ],
+);
+
+// In main widget
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _appLinks = AppLinks();
+
+  @override
+  void initState() {
+    super.initState();
+    _initDeepLinks();
+  }
+
+  Future<void> _initDeepLinks() async {
+    // Handle cold start (app opened from link)
+    final uri = await _appLinks.getInitialAppLink();
+    if (uri != null) router.go(uri.path);
+
+    // Handle warm start (app already running)
+    _appLinks.uriLinkStream.listen((uri) {
+      router.go(uri.path);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => MaterialApp.router(routerConfig: router);
+}
+```
+
+---
+
+## Branch.io Deferred Deep Linking
+
+```swift
+// iOS AppDelegate
+func application(_ application: UIApplication,
+                 didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    Branch.getInstance().initSession(launchOptions: launchOptions) { params, error in
+        guard error == nil, let params = params as? [String: AnyObject] else { return }
+        if let productId = params["+productId"] as? String {
+            // User installed app via a product deep link — navigate to product
+            AppRouter.shared.navigateToProduct(productId)
+        }
+    }
+    return true
+}
+```
+
+---
+
+## Testing Commands
+
+```bash
+# iOS Universal Link test (Simulator)
+xcrun simctl openurl booted "https://yourdomain.com/product/123"
+
+# Android App Link test
+adb shell am start -W -a android.intent.action.VIEW \
+  -d "https://yourdomain.com/product/123" com.myapp.android
+
+# Verify Android App Links status
+adb shell pm get-app-links com.myapp.android
+
+# Test AASA file is accessible
+curl -I https://yourdomain.com/.well-known/apple-app-site-association
+
+# Validate assetlinks
+curl https://yourdomain.com/.well-known/assetlinks.json
+```

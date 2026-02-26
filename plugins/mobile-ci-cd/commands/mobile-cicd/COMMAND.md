@@ -1,87 +1,91 @@
 # /mobile-cicd
 
-A quick-access command for mobile-ci-cd workflows in Claude Code.
+Set up Fastlane lanes, GitHub Actions workflows, code signing, and distribution pipelines.
 
 ## Trigger
 
 `/mobile-cicd [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing mobile-ci-cd implementation
-- `generate` - Generate new mobile-ci-cd artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for mobile-ci-cd artifacts
+- `setup` - Scaffold Fastfile, Appfile, Gemfile for a project
+- `sign` - Configure code signing (iOS match, Android keystore)
+- `distribute` - TestFlight, Firebase App Distribution, or Google Play upload lane
+- `release` - Full App Store / Google Play production release lane
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - iOS Fastlane + GitHub Actions
+- `--android` - Android Fastlane + GitHub Actions
+- `--both` - Parallel iOS + Android workflow
+- `--ci <service>` - github-actions, bitrise (default: github-actions)
+- `--distribution <target>` - testflight, firebase, play-internal, play-production
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of mobile-ci-cd artifacts
-- Determine applicable standards and conventions
+### setup
+Output:
+```
+Gemfile           — bundler, fastlane gem
+fastlane/Appfile  — bundle_id, team_id, package_name
+fastlane/Fastfile — test, beta, release lanes skeleton
+```
 
-### Step 2: Analysis
-- Evaluate against mobile-cicd-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### sign
+iOS:
+1. `fastlane match init` command to set up git-based storage
+2. `match(type: "appstore", readonly: is_ci)` lane configuration
+3. Required secrets: `MATCH_PASSWORD`, `MATCH_GIT_BASIC_AUTHORIZATION`
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+Android:
+1. Keystore generation command
+2. Gradle signing config reading from env vars
+3. CI step to decode base64 keystore and write to temp file
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### distribute
+Output complete distribution lane:
+- Build step: `build_app` (iOS) or `gradle(task: "bundle")` (Android)
+- Upload step: `pilot` (TestFlight) / `firebase_app_distribution` / `upload_to_play_store`
+- Build number auto-increment from `${{ github.run_number }}`
+
+### release
+Full production lane:
+- Version bump
+- Changelog prompt (or read from CHANGELOG.md)
+- Build + sign
+- Submit for review (iOS `deliver` with `submit_for_review: true`)
+- Track promotion (Android `upload_to_play_store(track: "production")`)
 
 ## Output
 
-### Success
 ```
-## Mobile Ci Cd - [Action] Complete
+## CI/CD Configuration
 
-### Changes Made
-- [List of changes]
+### Secrets to Configure in GitHub/Bitrise
+[Table of required secrets]
 
-### Validation
-- [Checks passed]
+### fastlane/Fastfile
+[Complete Fastfile]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
-
-### Error
-```
-## Mobile Ci Cd - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### .github/workflows/mobile.yml
+[Complete workflow YAML]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/mobile-cicd analyze
+# Set up Fastlane for new iOS project
+/mobile-cicd setup --ios
 
-# Generate new artifacts
-/mobile-cicd generate --context ./src
+# Configure code signing with match
+/mobile-cicd sign --ios
 
-# Validate against best practices
-/mobile-cicd validate --verbose
+# TestFlight beta distribution lane
+/mobile-cicd distribute --ios --distribution testflight
 
-# Generate documentation
-/mobile-cicd document --format markdown
+# Full iOS + Android CI pipeline
+/mobile-cicd setup --both --ci github-actions
+
+# Google Play internal track
+/mobile-cicd distribute --android --distribution play-internal
 ```

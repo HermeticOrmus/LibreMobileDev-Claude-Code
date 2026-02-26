@@ -1,46 +1,49 @@
 # Kotlin Android
 
-Kotlin, Jetpack Compose, Android SDK, lifecycle
+Kotlin coroutines, Jetpack Compose, ViewModel + StateFlow, Room, Hilt, WorkManager.
 
 ## What's Included
 
 ### Agents
-- **Android Developer** - Specialized agent for Kotlin, Jetpack Compose, Android SDK, lifecycle
+- **android-developer** - Expert in Kotlin Flow operators, Compose recomposition optimization, ViewModel SavedStateHandle, Room DAO with Flow, Hilt scoping, WorkManager constraints
 
 ### Commands
-- `/android` - Quick-access command for kotlin-android workflows
+- `/android` - Compose screens, ViewModels, Room entities, Hilt modules
 
 ### Skills
-- **Kotlin Android Patterns** - Pattern library and knowledge base for kotlin-android
+- **kotlin-android-patterns** - MVVM with StateFlow, Room Entity+DAO+Repository, Hilt module, Compose recomposition optimization with derivedStateOf, WorkManager CoroutineWorker
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Full feature screen (Compose + ViewModel + Room)
+/android compose --feature product-list
 
-## Usage Examples
+# ViewModel with async state management
+/android viewmodel --feature checkout
 
-```
-# Use the command directly
-/android analyze
-
-# Use the command with specific input
-/android generate --context "your project"
-
-# Reference patterns from the skill
-"Apply kotlin-android-patterns patterns to this implementation"
+# Database setup with migrations
+/android room --feature order-history
 ```
 
-## Key Patterns
+## Architecture Stack
 
-- Follow established conventions for kotlin-android
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+```
+UI Layer:        Compose + collectAsStateWithLifecycle()
+                 ↑
+ViewModel:       StateFlow<UiState> + viewModelScope
+                 ↑
+Domain:          UseCase classes (pure Kotlin)
+                 ↑
+Repository:      Room DAO + Retrofit API (Dispatchers.IO)
+                 ↑
+Data Sources:    Room Database + Remote API
+```
 
-## Related Plugins
+## Key Rules
 
-Check the main README for related plugins in this collection.
+- Always use `collectAsStateWithLifecycle()` not `collectAsState()` — stops on background
+- All database operations on `Dispatchers.IO` — never main thread
+- `SavedStateHandle` for any state that must survive process death
+- `derivedStateOf { }` for computed values to avoid unnecessary recompositions
+- Single `UiState` data class per screen — no multiple LiveData fields

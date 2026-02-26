@@ -1,46 +1,60 @@
 # Push Notifications
 
-FCM, APNs, notification channels, rich notifications
+APNs JWT auth, FCM HTTP v1, Android notification channels (API 26+), rich notifications with UNNotificationServiceExtension, silent push, all-state handling (foreground/background/terminated).
 
 ## What's Included
 
 ### Agents
-- **Push Engineer** - Specialized agent for FCM, APNs, notification channels, rich notifications
+- **push-engineer** - Expert in APNs JWT authentication, FCM HTTP v1, notification channels, rich notification extensions, and multi-state push handling
 
 ### Commands
-- `/push` - Quick-access command for push-notifications workflows
+- `/push` - Implement push end-to-end: `configure`, `send`, `receive`, `rich`
 
 ### Skills
-- **Push Notification Patterns** - Pattern library and knowledge base for push-notifications
+- **push-notification-patterns** - iOS AppDelegate FCM+APNs setup, UNNotificationServiceExtension for image download, Android Application channel creation, FirebaseMessagingService with NotificationCompat, FCM HTTP v1 payload JSON, state handling summary
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# iOS push setup
+/push configure --ios
 
-## Usage Examples
+# Android channels + handler
+/push configure --android
 
-```
-# Use the command directly
-/push analyze
+# Rich push with image
+/push rich --ios
 
-# Use the command with specific input
-/push generate --context "your project"
-
-# Reference patterns from the skill
-"Apply push-notification-patterns patterns to this implementation"
+# FCM server payload structure
+/push send
 ```
 
-## Key Patterns
+## APNs vs FCM
 
-- Follow established conventions for push-notifications
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Concern | APNs Direct | FCM |
+|---------|-------------|-----|
+| iOS delivery | Direct | Via FCM → APNs |
+| Android delivery | N/A | Direct |
+| Cross-platform | No | Yes |
+| Auth | JWT (p8) or Certificate | OAuth 2.0 service account |
+| Topic messaging | No | Yes |
 
-## Related Plugins
+Use FCM for cross-platform apps; APNs direct only for iOS-only apps.
 
-Check the main README for related plugins in this collection.
+## Android Notification Channel Importance
+
+| Level | Sound | Heads-up | Use Case |
+|-------|-------|----------|----------|
+| `IMPORTANCE_HIGH` | Yes | Yes | Order updates, alerts |
+| `IMPORTANCE_DEFAULT` | Yes | No | General notifications |
+| `IMPORTANCE_LOW` | No | No | Promotions, tips |
+| `IMPORTANCE_MIN` | No | No | Silent status |
+
+## Critical Rules
+
+- Create notification channels in `Application.onCreate`, not in Activity — channels must exist before first notification
+- Always include `channel_id` in FCM Android payload — default channel may not exist on all devices
+- APNs JWT tokens expire in 1 hour — refresh automatically using service account key rotation
+- Never call `onNewToken` registration synchronously — it may fire multiple times; debounce or check for change
+- `mutable-content: 1` only works if a `UNNotificationServiceExtension` target is present in the app
+- Use `content-available: 1` (silent push) for background data refresh; never for visible notifications

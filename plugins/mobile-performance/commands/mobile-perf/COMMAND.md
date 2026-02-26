@@ -1,87 +1,87 @@
 # /mobile-perf
 
-A quick-access command for mobile-performance workflows in Claude Code.
+Profile and optimize iOS, Android, and Flutter apps for frame rate, launch time, memory, and battery.
 
 ## Trigger
 
 `/mobile-perf [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing mobile-performance implementation
-- `generate` - Generate new mobile-performance artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for mobile-performance artifacts
+- `profile` - Interpret profiler output and identify hotspots
+- `launch` - Measure and optimize app launch time
+- `memory` - Diagnose memory growth, leaks, and excessive allocation
+- `render` - Fix frame drops and UI jank
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - iOS Instruments (Time Profiler, Allocations, Core Animation)
+- `--android` - Android Profiler, Systrace, StrictMode
+- `--flutter` - Flutter DevTools, Performance view, Widget Rebuild Stats
+- `--target <hz>` - Frame rate target: 60, 90, 120 (default: 60)
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of mobile-performance artifacts
-- Determine applicable standards and conventions
+### profile
+1. Read Instruments Time Profiler output (Invert Call Tree + Hide System Libraries)
+2. Identify heaviest app-owned methods by self-time
+3. Classify bottleneck: CPU-bound / memory-bound / GPU-bound / I/O-bound
+4. Suggest targeted fix per root cause
 
-### Step 2: Analysis
-- Evaluate against mobile-perf-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### launch
+1. iOS: use Application Launch Instruments template — shows pre-main, main, first frame
+2. Identify slow `+load` methods — replace with `+initialize` or lazy singletons
+3. Count dylib dependencies — reduce to under 6 dynamic frameworks
+4. Defer non-critical work to `DispatchQueue.main.async { }` after first frame
+5. Android: use Perfetto or StartupTracing; generate Baseline Profile
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### memory
+1. iOS Allocations instrument: "Generation Analysis" — snapshot before/after action
+2. Identify abandoned memory — allocations not released after user action completes
+3. iOS Leaks instrument: detect circular retain cycles in delegate/closure patterns
+4. Android: heap dump via Memory Profiler → Retained Size sorted descending
+5. Image memory: verify all images are downsampled to display size, not full resolution
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### render
+1. Flutter DevTools Performance view — identify red frames (> 16ms at 60fps)
+2. Widget Rebuild Stats — count rebuilds per widget per second
+3. iOS Core Animation instrument — red frames, "Color Offscreen-Rendered Yellow"
+4. Android GPU Profiler / "Profile GPU Rendering" in Developer Options
+5. Fix: move work off main thread, reduce overdraw, use RepaintBoundary / layer rasterization
 
 ## Output
 
-### Success
 ```
-## Mobile Performance - [Action] Complete
+## Performance Analysis
 
-### Changes Made
-- [List of changes]
+### Bottleneck Identified
+Type: [CPU / Memory / Rendering / I/O / Network]
+Platform: [iOS / Android / Flutter]
+Symptom: [description]
+Measured: [frame time / memory delta / launch time]
 
-### Validation
-- [Checks passed]
+### Root Cause
+[Specific call, widget, or operation causing the issue]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### Fix
+[Code change with explanation of why it helps]
 
-### Error
-```
-## Mobile Performance - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Expected Improvement
+[Before/after estimate — e.g., 28ms → 11ms frame time]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/mobile-perf analyze
+# Flutter frame drop investigation
+/mobile-perf render --flutter --target 60
 
-# Generate new artifacts
-/mobile-perf generate --context ./src
+# iOS app launch over 400ms
+/mobile-perf launch --ios
 
-# Validate against best practices
-/mobile-perf validate --verbose
+# Android memory growth in RecyclerView screen
+/mobile-perf memory --android
 
-# Generate documentation
-/mobile-perf document --format markdown
+# Interpret Instruments Time Profiler callstack
+/mobile-perf profile --ios
 ```

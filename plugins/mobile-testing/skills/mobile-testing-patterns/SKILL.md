@@ -1,88 +1,269 @@
 # Mobile Testing Patterns
 
-A comprehensive pattern library and knowledge base for mobile-testing.
+## iOS: XCTest Unit Test with Async/Await
 
-## Knowledge Base
+```swift
+import XCTest
+@testable import MyApp
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern mobile-testing
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for mobile-testing
+final class ProductRepositoryTests: XCTestCase {
+    var sut: ProductRepository!
+    var mockAPIClient: MockAPIClient!
 
-### Architecture Principles
-- Separation of concerns within mobile-testing implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+    override func setUp() async throws {
+        try await super.setUp()
+        mockAPIClient = MockAPIClient()
+        sut = ProductRepositoryImpl(apiClient: mockAPIClient)
+    }
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+    override func tearDown() async throws {
+        sut = nil
+        mockAPIClient = nil
+        try await super.tearDown()
+    }
 
-## Patterns
+    func testFetchProducts_returnsProductsOnSuccess() async throws {
+        // Given
+        let expectedProducts = [Product(id: "1", name: "Widget"), Product(id: "2", name: "Gadget")]
+        mockAPIClient.stubbedProducts = expectedProducts
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+        // When
+        let products = try await sut.fetchProducts()
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+        // Then
+        XCTAssertEqual(products.count, 2)
+        XCTAssertEqual(products.first?.name, "Widget")
+    }
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+    func testFetchProducts_throwsOnNetworkError() async {
+        // Given
+        mockAPIClient.stubbedError = URLError(.notConnectedToInternet)
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+        // When / Then
+        do {
+            _ = try await sut.fetchProducts()
+            XCTFail("Expected error to be thrown")
+        } catch {
+            XCTAssertTrue(error is URLError)
+        }
+    }
+}
 
-## Anti-Patterns
+// Mock using protocol
+class MockAPIClient: APIClientProtocol {
+    var stubbedProducts: [Product] = []
+    var stubbedError: Error?
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+    func fetchProducts() async throws -> [Product] {
+        if let error = stubbedError { throw error }
+        return stubbedProducts
+    }
+}
+```
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+---
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+## iOS: XCUITest with Accessibility Identifiers
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+```swift
+final class CheckoutUITests: XCTestCase {
+    var app: XCUIApplication!
 
-## References
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+        app = XCUIApplication()
+        app.launchArguments = ["--uitesting"]
+        app.launchEnvironment = ["MOCK_API": "true"]
+        app.launch()
+    }
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+    func testCheckoutFlow_completesSuccessfully() throws {
+        // Navigate to cart
+        app.tabBars.buttons["Cart"].tap()
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+        // Verify item count
+        let cartCount = app.staticTexts["cart_item_count"]
+        XCTAssertTrue(cartCount.waitForExistence(timeout: 2))
+        XCTAssertEqual(cartCount.label, "3 items")
 
-### Tools
-- Development tools for mobile-testing
-- Testing and validation tools
-- Monitoring and observability tools
+        // Tap checkout
+        app.buttons["checkout_button"].tap()
+
+        // Fill shipping form
+        let nameField = app.textFields["shipping_name_field"]
+        nameField.tap()
+        nameField.typeText("John Doe")
+
+        // Submit
+        app.buttons["place_order_button"].tap()
+
+        // Assert success screen
+        let confirmation = app.staticTexts["order_confirmation_title"]
+        XCTAssertTrue(confirmation.waitForExistence(timeout: 5))
+        XCTAssertEqual(confirmation.label, "Order Confirmed")
+    }
+}
+```
+
+---
+
+## Android: Espresso with Compose
+
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class ProductScreenTest {
+
+    @get:Rule
+    val composeTestRule = createComposeRule()
+
+    @Test
+    fun productList_displaysItems() {
+        val fakeProducts = listOf(
+            Product(id = "1", name = "Widget", price = 9.99),
+            Product(id = "2", name = "Gadget", price = 19.99)
+        )
+        val fakeViewModel = FakeProductViewModel(fakeProducts)
+
+        composeTestRule.setContent {
+            ProductScreen(viewModel = fakeViewModel)
+        }
+
+        // Assert items visible
+        composeTestRule.onNodeWithText("Widget").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Gadget").assertIsDisplayed()
+        composeTestRule.onNodeWithText("$9.99").assertIsDisplayed()
+    }
+
+    @Test
+    fun productItem_tapAddsToCart() {
+        composeTestRule.setContent {
+            ProductScreen(viewModel = FakeProductViewModel(sampleProducts))
+        }
+
+        composeTestRule
+            .onNodeWithText("Widget")
+            .performClick()
+
+        composeTestRule
+            .onNodeWithContentDescription("Cart badge")
+            .assertTextEquals("1")
+    }
+}
+```
+
+---
+
+## Flutter: Widget Test
+
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/features/cart/cart_screen.dart';
+
+void main() {
+  group('CartScreen', () {
+    testWidgets('displays empty state when cart is empty', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            cartProvider.overrideWith((ref) => CartNotifier()),
+          ],
+          child: const MaterialApp(home: CartScreen()),
+        ),
+      );
+
+      expect(find.text('Your cart is empty'), findsOneWidget);
+      expect(find.byType(CartItemTile), findsNothing);
+    });
+
+    testWidgets('shows item count after adding product', (tester) async {
+      final cartNotifier = CartNotifier();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            cartProvider.overrideWith((ref) => cartNotifier),
+          ],
+          child: const MaterialApp(home: CartScreen()),
+        ),
+      );
+
+      // Add item programmatically
+      cartNotifier.add(Product(id: '1', name: 'Widget', price: 9.99));
+      await tester.pump();
+
+      expect(find.byType(CartItemTile), findsOneWidget);
+      expect(find.text('Widget'), findsOneWidget);
+    });
+  });
+}
+```
+
+### Flutter: Golden Test
+```dart
+testWidgets('ProductCard matches golden', (tester) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: ProductCard(product: Product(id: '1', name: 'Widget', price: 9.99)),
+    ),
+  );
+
+  await expectLater(
+    find.byType(ProductCard),
+    matchesGoldenFile('goldens/product_card.png'),
+  );
+});
+// Update goldens: flutter test --update-goldens
+```
+
+---
+
+## Flutter: Integration Test
+
+```dart
+// integration_test/checkout_test.dart
+import 'package:integration_test/integration_test.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('complete checkout flow', (tester) async {
+    app.main();
+    await tester.pumpAndSettle();
+
+    // Navigate to products
+    await tester.tap(find.byKey(const Key('products_tab')));
+    await tester.pumpAndSettle();
+
+    // Add first product
+    await tester.tap(find.byKey(const Key('add_to_cart_0')));
+    await tester.pumpAndSettle();
+
+    // Go to cart
+    await tester.tap(find.byKey(const Key('cart_tab')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 item'), findsOneWidget);
+
+    // Proceed to checkout
+    await tester.tap(find.text('Checkout'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Shipping Details'), findsOneWidget);
+  });
+}
+```
+
+---
+
+## Testing Pyramid by Platform
+
+| Layer | iOS | Android | Flutter | Speed |
+|-------|-----|---------|---------|-------|
+| Unit | XCTest | JUnit + Mockito | dart test | Fast |
+| Component | XCTest (no UI) | Robolectric | widget test | Fast |
+| Integration | XCUITest | Espresso / Compose | integration_test | Slow |
+| Device Farm | Firebase Test Lab | Firebase Test Lab | Firebase Test Lab | Slowest |
+
+Run unit + widget tests on every PR. Integration and device farm tests pre-release or nightly.

@@ -1,87 +1,83 @@
 # /mobile-arch
 
-A quick-access command for mobile-architecture workflows in Claude Code.
+Design Clean Architecture layers, implement MVVM/MVI patterns, structure navigation, plan module structure.
 
 ## Trigger
 
 `/mobile-arch [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing mobile-architecture implementation
-- `generate` - Generate new mobile-architecture artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for mobile-architecture artifacts
+- `design` - Design full architecture for a feature or app
+- `layers` - Generate Clean Architecture layer scaffolding
+- `navigate` - Implement Coordinator (iOS) or NavGraph (Android) for a flow
+- `test` - Generate architecture test strategy and sample tests
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - Swift/UIKit/SwiftUI Coordinator pattern
+- `--android` - Kotlin/Compose/Navigation Component
+- `--flutter` - go_router / Riverpod architecture
+- `--pattern <name>` - mvvm, mvi, clean
+- `--feature <name>` - Feature being designed
+- `--multi-module` - Include multi-module structure
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of mobile-architecture artifacts
-- Determine applicable standards and conventions
+### design
+1. Identify domain entities for the feature
+2. Define repository interface in domain layer
+3. Define UseCase(s) for business logic operations
+4. Define ViewModel UiState and events/intents
+5. Show dependency injection wiring
+6. Output full directory structure
 
-### Step 2: Analysis
-- Evaluate against mobile-arch-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
-
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
-
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
-
-## Output
-
-### Success
+### layers
+Scaffold all three layers:
 ```
-## Mobile Architecture - [Action] Complete
+domain/
+  entities/    Product.kt
+  repositories/ProductRepository.kt (interface)
+  usecases/    GetProductsUseCase.kt
 
-### Changes Made
-- [List of changes]
+data/
+  remote/      ProductRemoteDataSource.kt, ProductApi.kt
+  local/       ProductEntity.kt, ProductDao.kt
+  repository/  ProductRepositoryImpl.kt
 
-### Validation
-- [Checks passed]
-
-### Next Steps
-- [Recommended follow-up actions]
+presentation/
+  ProductListViewModel.kt
+  ProductListUiState.kt
+  ProductListScreen.kt (or Fragment)
 ```
 
-### Error
-```
-## Mobile Architecture - [Action] Failed
+### navigate
+- iOS: `Coordinator` protocol + `AppCoordinator` + feature coordinator + delegate protocol
+- Android: `NavGraph` XML/DSL + `SafeArgs` navigation action + args receiving
+- Flutter: `go_router` routes with typed parameters
 
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
-```
+### test
+Output:
+- UseCase unit test (mock repository, verify state transitions)
+- ViewModel unit test (mock UseCase, verify StateFlow values)
+- Repository integration test (in-memory Room database)
+- UI instrumentation test outline
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/mobile-arch analyze
+# Full Clean Architecture design for checkout feature
+/mobile-arch design --android --feature checkout --pattern clean
 
-# Generate new artifacts
-/mobile-arch generate --context ./src
+# Scaffold MVI layers for iOS
+/mobile-arch layers --ios --pattern mvi --feature auth
 
-# Validate against best practices
-/mobile-arch validate --verbose
+# iOS Coordinator for onboarding flow
+/mobile-arch navigate --ios --feature onboarding
 
-# Generate documentation
-/mobile-arch document --format markdown
+# Android navigation with SafeArgs
+/mobile-arch navigate --android --feature product
+
+# Test strategy for ViewModel layer
+/mobile-arch test --android --feature checkout
 ```

@@ -1,46 +1,66 @@
 # React Native
 
-React Native components, navigation, native modules, Expo
+New Architecture (JSI/TurboModules/Fabric), Expo EAS, React Navigation, Reanimated 3, Zustand, TanStack Query, MMKV storage.
 
 ## What's Included
 
 ### Agents
-- **Rn Developer** - Specialized agent for React Native components, navigation, native modules, Expo
+- **rn-developer** - Expert in New Architecture, Expo managed/bare workflows, React Navigation typed params, Reanimated 3 UI-thread animations, TurboModule specs, Metro bundler
 
 ### Commands
-- `/react-native` - Quick-access command for react-native workflows
+- `/react-native` - Build RN apps: `init`, `navigate`, `animate`, `build`
 
 ### Skills
-- **React Native Patterns** - Pattern library and knowledge base for react-native
+- **react-native-patterns** - Typed `RootStackParamList` navigation, Zustand store with MMKV persistence, Reanimated 3 swipe card with Gesture.Pan, TanStack Query infinite list, TurboModule TypeScript spec, FlatList performance props
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# Typed navigation stack
+/react-native navigate --typescript
 
-## Usage Examples
+# Swipe animation with Reanimated 3
+/react-native animate
 
-```
-# Use the command directly
-/react-native analyze
+# Expo EAS build config
+/react-native build --expo
 
-# Use the command with specific input
-/react-native generate --context "your project"
-
-# Reference patterns from the skill
-"Apply react-native-patterns patterns to this implementation"
+# New Architecture setup
+/react-native init --new-arch
 ```
 
-## Key Patterns
+## Architecture Decision Guide
 
-- Follow established conventions for react-native
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Need | Choose |
+|------|--------|
+| No custom native code | Expo managed |
+| Custom native code or SDK | Bare workflow |
+| Simple global state | Zustand |
+| Atom-based reactive state | Jotai |
+| Server data fetching/caching | TanStack Query |
+| Synchronous storage | MMKV |
+| Offline-first database | WatermelonDB |
+| 60/120fps animations | Reanimated 3 |
+| Platform-specific nav behavior | @react-navigation/native-stack |
 
-## Related Plugins
+## New Architecture Components
 
-Check the main README for related plugins in this collection.
+```
+JS Thread (Hermes)
+  ↕ JSI (direct C++ binding, no JSON)
+UI Thread (Fabric renderer)
+  ↕
+Native Views
+
+TurboModules: lazily loaded native modules
+  TypeScript spec → code-gen → native interface
+```
+
+## Critical Rules
+
+- Use `@react-navigation/native-stack` not JS stack — uses native UINavigationController/Fragment
+- Always define `ParamList` types before writing screen components — type errors catch missing params
+- Reanimated worklets (`useAnimatedStyle` callbacks) run on UI thread — never call JS functions directly
+- Use `runOnJS(callback)()` to call back to JS from a worklet when an animation completes
+- MMKV is synchronous; never use in render — call in event handlers or effects only
+- EAS keystore must be in EAS secrets, never committed to git

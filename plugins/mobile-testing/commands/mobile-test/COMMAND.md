@@ -1,87 +1,87 @@
 # /mobile-test
 
-A quick-access command for mobile-testing workflows in Claude Code.
+Write unit tests, widget tests, UI automation, and configure device farm runs.
 
 ## Trigger
 
 `/mobile-test [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing mobile-testing implementation
-- `generate` - Generate new mobile-testing artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for mobile-testing artifacts
+- `unit` - Generate unit tests for business logic, view models, repositories
+- `ui` - Generate UI/integration tests for user flows
+- `golden` - Screenshot regression tests for visual components
+- `cloud` - Firebase Test Lab configuration for device matrix runs
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - XCTest / XCUITest
+- `--android` - Espresso / Compose test / Robolectric
+- `--flutter` - Flutter widget test / integration_test
+- `--rn` - Detox for React Native
+- `--coverage` - Add coverage thresholds and reporting
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of mobile-testing artifacts
-- Determine applicable standards and conventions
+### unit
+1. Identify public API of the class under test
+2. Create test file with `setUp` fixture and dependency mocks (protocol-based)
+3. Happy path first, then error cases, then edge cases
+4. Async: `async throws` test functions (Swift), `runTest { }` (Kotlin), `async` (Dart)
+5. Assert on outputs, not on how the mock was called (behavior, not implementation)
 
-### Step 2: Analysis
-- Evaluate against mobile-testing-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### ui
+1. Add `accessibilityIdentifier` / `testTag` / `contentDescription` to all interactive elements
+2. Inject test mode via launch arguments — disable animations, mock network layer
+3. Write flows from user perspective: tap, type, swipe, assert visible state
+4. Never use `Thread.sleep` / `Task.sleep` — use proper waits and assertions
+5. Reset app state in `setUp` — each test independent
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### golden
+1. Flutter: `matchesGoldenFile('path/name.png')` in widget test
+2. iOS: `XCUIScreen.main.screenshot()` attached to `XCTAttachment`
+3. Run `flutter test --update-goldens` to regenerate after intentional UI changes
+4. Store goldens in version control; review diffs in PR
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### cloud
+1. Android: `gcloud firebase test android run` with `--device` matrix
+2. iOS: `gcloud firebase test ios run` with `--device` model/version/locale
+3. Robo test for smoke: no test code needed, crawls app automatically
+4. Parse results: check for crash-free rate and test pass rate
 
 ## Output
 
-### Success
 ```
-## Mobile Testing - [Action] Complete
+## Test Suite
 
-### Changes Made
-- [List of changes]
+### Test File
+[Complete test file with all cases]
 
-### Validation
-- [Checks passed]
+### Mocks / Fakes
+[Mock implementations needed]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### CI Integration
+[GitHub Actions step or Fastlane scan lane]
 
-### Error
-```
-## Mobile Testing - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Coverage Notes
+[What's tested, what's intentionally omitted]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/mobile-test analyze
+# XCTest async unit tests for AuthViewModel
+/mobile-test unit --ios
 
-# Generate new artifacts
-/mobile-test generate --context ./src
+# Espresso checkout flow test
+/mobile-test ui --android
 
-# Validate against best practices
-/mobile-test validate --verbose
+# Flutter golden tests for ProductCard component
+/mobile-test golden --flutter
 
-# Generate documentation
-/mobile-test document --format markdown
+# Firebase Test Lab Android matrix config
+/mobile-test cloud --android
+
+# Flutter integration test for full onboarding flow
+/mobile-test ui --flutter
 ```

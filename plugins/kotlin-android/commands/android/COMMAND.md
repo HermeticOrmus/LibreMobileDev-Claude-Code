@@ -1,87 +1,79 @@
 # /android
 
-A quick-access command for kotlin-android workflows in Claude Code.
+Jetpack Compose UI, ViewModel + StateFlow, Room database, Hilt DI, WorkManager.
 
 ## Trigger
 
 `/android [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing kotlin-android implementation
-- `generate` - Generate new kotlin-android artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for kotlin-android artifacts
+- `compose` - Scaffold a Compose screen with ViewModel and state
+- `viewmodel` - Implement ViewModel with UiState and event handling
+- `room` - Generate Room entity, DAO, and database setup
+- `hilt` - Set up Hilt module for a dependency
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--feature <name>` - Feature name for scoping generated code
+- `--mvi` - Use MVI pattern (intent → state) instead of MVVM
+- `--flow` - Include Flow operators and StateFlow patterns
+- `--workmanager` - Include WorkManager background task
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of kotlin-android artifacts
-- Determine applicable standards and conventions
+### compose
+1. Scaffold feature-level Composable with ViewModel via `hiltViewModel()`
+2. Collect state with `collectAsStateWithLifecycle()`
+3. Handle loading/error/content states
+4. Pass events up as lambda callbacks (not ViewModel directly to child composables)
 
-### Step 2: Analysis
-- Evaluate against kotlin-android-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### viewmodel
+Output:
+- `UiState` data class with all fields
+- `MutableStateFlow` + `StateFlow` exposure
+- Event handling functions
+- `viewModelScope.launch` with `Dispatchers.IO` for async work
+- Error handling with `.catch` on Flow
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### room
+Output:
+- `@Entity` data class with proper annotations
+- `@Dao` interface with Flow-returning `@Query` methods
+- `@Database` class with migration stubs
+- Repository wrapping DAO
+- `inMemoryDatabaseBuilder` test setup
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### hilt
+Output:
+- `@Module` with `@InstallIn` for correct scope
+- `@Provides` for concrete types
+- `@Binds` for interface implementations
+- `@HiltViewModel` ViewModel example
 
 ## Output
 
-### Success
-```
-## Kotlin Android - [Action] Complete
-
-### Changes Made
-- [List of changes]
-
-### Validation
-- [Checks passed]
-
-### Next Steps
-- [Recommended follow-up actions]
-```
-
-### Error
-```
-## Kotlin Android - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
-```
+All output follows:
+- Single-activity architecture with Navigation Component
+- Unidirectional data flow (UDF)
+- `collectAsStateWithLifecycle` (not `collectAsState`) for lifecycle-aware collection
+- `Dispatchers.IO` for all database/network; `Dispatchers.Main` for UI
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/android analyze
+# Full Compose screen for product list
+/android compose --feature product-list
 
-# Generate new artifacts
-/android generate --context ./src
+# ViewModel with SavedStateHandle for search
+/android viewmodel --feature search
 
-# Validate against best practices
-/android validate --verbose
+# Room setup for user entity
+/android room --feature user-profile
 
-# Generate documentation
-/android document --format markdown
+# Hilt network module
+/android hilt --feature network
+
+# Background sync with WorkManager
+/android compose --feature settings --workmanager
 ```

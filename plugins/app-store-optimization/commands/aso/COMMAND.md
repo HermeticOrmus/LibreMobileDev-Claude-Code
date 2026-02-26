@@ -1,87 +1,94 @@
 # /aso
 
-A quick-access command for app-store-optimization workflows in Claude Code.
+App Store and Google Play listing optimization: metadata, keywords, screenshots, monitoring.
 
 ## Trigger
 
 `/aso [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing app-store-optimization implementation
-- `generate` - Generate new app-store-optimization artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for app-store-optimization artifacts
+- `audit` - Score existing metadata against ASO best practices
+- `keywords` - Research and optimize keyword strategy
+- `screenshots` - Brief and spec screenshot sequence
+- `monitor` - Define rank tracking and monitoring setup
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - iOS App Store focus
+- `--android` - Google Play focus
+- `--both` - Both stores (default)
+- `--locale <code>` - Target locale (en-US, es-ES, ja-JP, etc.)
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of app-store-optimization artifacts
-- Determine applicable standards and conventions
+### audit
+1. Parse provided title, subtitle/short description, keyword field, description
+2. Check character count vs limits per field
+3. Check for keyword repetition between fields (wasted characters)
+4. Score screenshot sequence: does first screenshot communicate value in 3 seconds?
+5. Output scoring table with specific fixes
 
-### Step 2: Analysis
-- Evaluate against aso-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### keywords
+1. Analyze current keyword coverage
+2. Identify highest-impact gaps by volume and competition
+3. Produce updated keyword field (100 chars for iOS, density plan for Android)
+4. Show before/after character usage
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### screenshots
+Output creative brief for each screenshot:
+```
+Screenshot 1 (Hero):
+  Goal: Communicate core value proposition in 3 seconds
+  Visual: [screen/mockup description]
+  Caption: "[benefit-oriented text, max 30 chars for legibility]"
+  Device frame: [iOS 6.9" or Android pixel mockup]
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+Screenshot 2:
+  Goal: Demonstrate primary use case
+  Visual: [screen description]
+  Caption: "[text]"
+```
+
+### monitor
+Define tracking setup:
+- Primary keywords to monitor (10-15 max)
+- Competitor apps to benchmark against
+- Alert thresholds (rank drops > 5 positions)
+- Review velocity tracking (target: N reviews/week)
+- Recommended tools: AppFollow, Sensor Tower, AppTweak
 
 ## Output
 
-### Success
+### audit output
 ```
-## App Store Optimization - [Action] Complete
+## ASO Audit — [App Name]
 
-### Changes Made
-- [List of changes]
+### Field Scores
+| Field | Used | Limit | Score | Issues |
+|-------|------|-------|-------|--------|
+| Title | 18 | 30 | 7/10 | Missing primary keyword |
+| Subtitle | 30 | 30 | 9/10 | Good |
+| Keywords | 87 | 100 | 6/10 | 13 chars wasted, 4 repeated words |
 
-### Validation
-- [Checks passed]
-
-### Next Steps
-- [Recommended follow-up actions]
-```
-
-### Error
-```
-## App Store Optimization - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Quick Wins
+1. Add "[keyword]" to title — est. +15% search impression share
+2. Remove "[repeated word]" from keyword field — free 8 chars for "[better keyword]"
+3. Replace screenshot 1 caption: "[current]" → "[benefit-focused alternative]"
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/aso analyze
+# Full listing audit for iOS
+/aso audit --ios
 
-# Generate new artifacts
-/aso generate --context ./src
+# Android keyword optimization for Spanish market
+/aso keywords --android --locale es-ES
 
-# Validate against best practices
-/aso validate --verbose
+# Screenshot brief for both stores
+/aso screenshots --both
 
-# Generate documentation
-/aso document --format markdown
+# Set up monitoring after a metadata update
+/aso monitor --both
 ```

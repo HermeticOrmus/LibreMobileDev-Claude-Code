@@ -1,87 +1,84 @@
 # /deep-link
 
-A quick-access command for deep-linking workflows in Claude Code.
+Configure Universal Links, App Links, custom schemes, routing, and deferred deep linking.
 
 ## Trigger
 
 `/deep-link [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing deep-linking implementation
-- `generate` - Generate new deep-linking artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for deep-linking artifacts
+- `configure` - Generate AASA, assetlinks.json, entitlements, and Manifest entries
+- `test` - Generate platform test commands for a given URL
+- `handle` - Implement in-app route handling for a given URL pattern
+- `debug` - Diagnose why a deep link isn't working
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - iOS Universal Links focus
+- `--android` - Android App Links focus
+- `--flutter` - Flutter go_router handling
+- `--url <pattern>` - Specify URL pattern (e.g. `https://myapp.com/product/:id`)
+- `--deferred` - Include Branch.io or Firebase Dynamic Links deferred linking
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of deep-linking artifacts
-- Determine applicable standards and conventions
+### configure
+1. Parse provided URL pattern
+2. Generate AASA JSON (iOS) with correct `components` format
+3. Generate assetlinks.json (Android) — prompt for Team ID + Bundle ID, Package + SHA-256
+4. Generate Xcode entitlement entry
+5. Generate AndroidManifest intent-filter XML
+6. Output server deployment instructions
 
-### Step 2: Analysis
-- Evaluate against deep-link-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### test
+Generate ready-to-run test commands:
+```bash
+# iOS Simulator
+xcrun simctl openurl booted "[url]"
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+# Android ADB
+adb shell am start -W -a android.intent.action.VIEW -d "[url]" [package]
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+# Verify Android App Link verification status
+adb shell pm get-app-links [package]
 
-## Output
-
-### Success
-```
-## Deep Linking - [Action] Complete
-
-### Changes Made
-- [List of changes]
-
-### Validation
-- [Checks passed]
-
-### Next Steps
-- [Recommended follow-up actions]
+# Check AASA server file
+curl -I https://[domain]/.well-known/apple-app-site-association
 ```
 
-### Error
-```
-## Deep Linking - [Action] Failed
+### handle
+Output routing code for the URL pattern:
+- iOS: `URLComponents` parsing + Navigation call
+- Android: `intent.data` parsing + Fragment/Activity navigation
+- Flutter: `go_router` `GoRoute` with `pathParameters` extraction
 
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
-```
+### debug
+Step-by-step diagnosis checklist:
+- [ ] AASA served correctly (no redirect, correct Content-Type, valid JSON)
+- [ ] AASA cached by Apple CDN (check with `curl -I`)
+- [ ] App entitlement includes domain with `applinks:` prefix
+- [ ] entitlement matches exactly — no trailing slash, no `www` mismatch
+- [ ] assetlinks.json SHA-256 matches production signing certificate
+- [ ] `android:autoVerify="true"` set on intent-filter
+- [ ] App Links verified (check with `adb shell pm get-app-links`)
+- [ ] Link was triggered from external app (direct address bar entry may not trigger)
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/deep-link analyze
+# Configure iOS Universal Links for product pages
+/deep-link configure --ios --url "https://myapp.com/product/:id"
 
-# Generate new artifacts
-/deep-link generate --context ./src
+# Configure both platforms simultaneously
+/deep-link configure --ios --android --url "https://myapp.com/product/:id"
 
-# Validate against best practices
-/deep-link validate --verbose
+# Test deep links on both platforms
+/deep-link test --url "https://myapp.com/product/123"
 
-# Generate documentation
-/deep-link document --format markdown
+# Implement Flutter route handler
+/deep-link handle --flutter --url "https://myapp.com/product/:id"
+
+# Debug Universal Links not working
+/deep-link debug --ios
 ```

@@ -1,87 +1,94 @@
 # /mobile-sec
 
-A quick-access command for mobile-security workflows in Claude Code.
+Implement secure storage, certificate pinning, biometric authentication, and code obfuscation.
 
 ## Trigger
 
 `/mobile-sec [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing mobile-security implementation
-- `generate` - Generate new mobile-security artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for mobile-security artifacts
+- `keychain` - Implement Keychain Services (iOS) or EncryptedSharedPreferences (Android)
+- `pin` - Certificate pinning with public key hash pinning
+- `biometric` - Biometric authentication with Keystore/Keychain-backed keys
+- `obfuscate` - R8/ProGuard rules for Android release builds
+- `audit` - Scan for security anti-patterns in provided code
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - iOS implementation (Keychain, LAContext, TrustKit, ATS)
+- `--android` - Android implementation (Keystore, BiometricPrompt, Network Security Config)
+- `--strict` - Most restrictive settings (`.biometryCurrentSet`, `WhenUnlockedThisDeviceOnly`)
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of mobile-security artifacts
-- Determine applicable standards and conventions
+### keychain
+1. iOS: `SecItemAdd` with `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`
+2. Android: `EncryptedSharedPreferences` with `MasterKey.KeyScheme.AES256_GCM`
+3. Add biometric gate: `SecAccessControl` (iOS) or `setUserAuthenticationRequired(true)` (Android)
+4. Never store in UserDefaults / SharedPreferences / NSUserDefaults
 
-### Step 2: Analysis
-- Evaluate against mobile-security-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### pin
+1. Generate SHA-256 of SubjectPublicKeyInfo DER (not leaf cert)
+2. iOS: `URLSessionDelegate.urlSession(_:didReceive:completionHandler:)` — verify hash in challenge
+3. Android: `network_security_config.xml` with `<pin-set>` or OkHttp `CertificatePinner`
+4. Always include minimum 2 hashes (primary + backup)
+5. Set expiration date on Android pin-set; schedule rotation reminder
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### biometric
+1. iOS: `LAContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics)` for UI-only
+2. iOS key-backed: `SecAccessControl` with `.biometryCurrentSet` on Keychain item
+3. Android: `BiometricPrompt` with `CryptoObject` backed by AndroidKeyStore key
+4. Use `setInvalidatedByBiometricEnrollment(true)` — prevents new finger attacks
+5. Handle all error codes: `LAError.biometryNotAvailable`, `BIOMETRIC_ERROR_NO_HARDWARE`
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### obfuscate
+1. `buildTypes.release.minifyEnabled = true`
+2. `shrinkResources = true` in release build type
+3. Keep rules for: JNI classes, serialization, reflection-accessed classes, Retrofit interfaces
+4. Test obfuscated build with all features before shipping
+5. Retain mapping file for crash deobfuscation
+
+### audit
+1. Check for secrets in source (API keys, tokens, private keys)
+2. Check storage: UserDefaults / SharedPreferences for sensitive data
+3. Check NSLog / Log.d for token or PII leakage
+4. Check ATS config: `NSAllowsArbitraryLoads`, `NSExceptionDomains`
+5. Check `android:allowBackup`, `android:usesCleartextTraffic`, `debuggable` in release
 
 ## Output
 
-### Success
 ```
-## Mobile Security - [Action] Complete
+## Security Implementation
 
-### Changes Made
-- [List of changes]
+### Storage
+[Keychain / EncryptedSharedPreferences setup code]
 
-### Validation
-- [Checks passed]
+### Network
+[Pinning configuration]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### Biometrics
+[Authentication flow code]
 
-### Error
-```
-## Mobile Security - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Audit Findings
+[Anti-patterns found with severity and fix]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/mobile-sec analyze
+# iOS Keychain with biometric gate
+/mobile-sec keychain --ios --strict
 
-# Generate new artifacts
-/mobile-sec generate --context ./src
+# Android certificate pinning
+/mobile-sec pin --android
 
-# Validate against best practices
-/mobile-sec validate --verbose
+# Biometric prompt with Keystore key
+/mobile-sec biometric --android
 
-# Generate documentation
-/mobile-sec document --format markdown
+# Audit Swift file for security issues
+/mobile-sec audit --ios
+
+# ProGuard/R8 rules for release build
+/mobile-sec obfuscate --android
 ```

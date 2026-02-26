@@ -1,87 +1,86 @@
 # /offline
 
-A quick-access command for offline-first workflows in Claude Code.
+Design offline-first data layers with local persistence, background sync, and conflict resolution.
 
 ## Trigger
 
 `/offline [action] [options]`
 
-## Input
+## Actions
 
-### Actions
-- `analyze` - Analyze existing offline-first implementation
-- `generate` - Generate new offline-first artifacts
-- `improve` - Suggest improvements to current implementation
-- `validate` - Check implementation against best practices
-- `document` - Generate documentation for offline-first artifacts
+- `design` - Design local schema with sync metadata fields
+- `sync` - Implement background sync worker with retry and conflict resolution
+- `conflict` - Choose and implement a conflict resolution strategy
+- `test` - Test offline behavior: network loss, conflict simulation
 
-### Options
-- `--context <path>` - Specify the file or directory to operate on
-- `--format <type>` - Output format (markdown, json, yaml)
-- `--verbose` - Include detailed explanations
-- `--dry-run` - Preview changes without applying them
+## Options
+
+- `--ios` - Core Data / SwiftData + BGTaskScheduler
+- `--android` - Room + WorkManager
+- `--flutter` - Drift / Isar + workmanager
+- `--strategy <type>` - Conflict strategy: lww, server-wins, client-wins, merge
+- `--realtime` - Add network state monitor for immediate sync on reconnect
 
 ## Process
 
-### Step 1: Context Gathering
-- Read relevant files and configuration
-- Identify the current state of offline-first artifacts
-- Determine applicable standards and conventions
+### design
+1. Add sync metadata columns to every synced table: `id` (UUID), `updatedAt`, `syncStatus` (pending/synced/failed), `deletedAt` (soft delete)
+2. Create pending queue view/query returning rows where syncStatus != 'synced'
+3. Design DAO/Repository interface: write local first, trigger sync after write
+4. Never use auto-increment IDs for synced records — use UUIDs generated client-side
 
-### Step 2: Analysis
-- Evaluate against offline-first-patterns patterns
-- Identify gaps, issues, and opportunities
-- Prioritize findings by impact and effort
+### sync
+1. iOS: register `BGProcessingTask` in AppDelegate; handle task in extension
+2. Android: `CoroutineWorker` with `setConstraints(NetworkType.CONNECTED)`
+3. Flutter: `workmanager` one-off task on data change; periodic task as fallback
+4. Retry logic: `Result.retry()` (Android) / `BGTaskScheduler.submit()` (iOS) with exponential backoff
+5. Mark sync success immediately when server confirms; handle 409/conflict separately
 
-### Step 3: Execution
-- Apply the requested action
-- Generate or modify artifacts as needed
-- Validate changes against requirements
+### conflict
+1. **LWW**: compare `updatedAt` timestamps; highest timestamp wins — implement in sync worker
+2. **Server wins**: on 409, fetch server version and overwrite local
+3. **Three-way merge**: track `baseVersion`, compare client delta vs server delta
+4. Log all conflict resolutions for audit trail
 
-### Step 4: Output
-- Present results in the requested format
-- Include actionable next steps
-- Flag any items requiring human decision
+### test
+1. Enable airplane mode mid-operation; verify app still functions
+2. Make changes on two devices; sync both; verify conflict resolution outcome
+3. Kill app during sync; verify pending queue is preserved and resumes correctly
+4. Test migration: add column to schema, verify existing data survives
 
 ## Output
 
-### Success
 ```
-## Offline First - [Action] Complete
+## Offline Architecture
 
-### Changes Made
-- [List of changes]
+### Schema
+[Table definitions with sync metadata]
 
-### Validation
-- [Checks passed]
+### Repository
+[Write-local-first with sync trigger]
 
-### Next Steps
-- [Recommended follow-up actions]
-```
+### Sync Worker
+[Background task with retry and conflict handling]
 
-### Error
-```
-## Offline First - [Action] Failed
-
-### Issue
-[Description of the problem]
-
-### Suggested Fix
-[How to resolve the issue]
+### Network Monitor
+[Connectivity observation triggering queue flush]
 ```
 
 ## Examples
 
 ```bash
-# Analyze current implementation
-/offline analyze
+# Android Room + WorkManager offline stack
+/offline design --android
 
-# Generate new artifacts
-/offline generate --context ./src
+# iOS Core Data with BGTaskScheduler sync
+/offline sync --ios
 
-# Validate against best practices
-/offline validate --verbose
+# Last-write-wins conflict resolution
+/offline conflict --strategy lww --android
 
-# Generate documentation
-/offline document --format markdown
+# Flutter Drift with workmanager
+/offline design --flutter
+
+# Immediate sync on reconnect
+/offline sync --android --realtime
 ```

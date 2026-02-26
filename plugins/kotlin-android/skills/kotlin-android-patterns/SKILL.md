@@ -1,88 +1,247 @@
 # Kotlin Android Patterns
 
-A comprehensive pattern library and knowledge base for kotlin-android.
+## MVVM: ViewModel + StateFlow + Compose
 
-## Knowledge Base
+```kotlin
+// UiState
+data class ProductListUiState(
+    val products: List<Product> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+)
 
-### Core Concepts
-- **Fundamentals**: The foundational principles that govern kotlin-android
-- **Terminology**: Standard vocabulary and definitions used in the domain
-- **Standards**: Industry standards and specifications that apply
-- **Tools**: Common tools and frameworks used for kotlin-android
+// ViewModel
+@HiltViewModel
+class ProductListViewModel @Inject constructor(
+    private val getProductsUseCase: GetProductsUseCase
+) : ViewModel() {
 
-### Architecture Principles
-- Separation of concerns within kotlin-android implementations
-- Modularity and reusability of components
-- Scalability considerations for growing systems
-- Integration patterns with adjacent domains
+    private val _uiState = MutableStateFlow(ProductListUiState(isLoading = true))
+    val uiState: StateFlow<ProductListUiState> = _uiState.asStateFlow()
 
-### Quality Attributes
-- **Correctness**: Implementations must meet functional requirements
-- **Maintainability**: Code and artifacts should be easy to understand and modify
-- **Performance**: Implementations should meet non-functional requirements
-- **Security**: Sensitive data and operations must be properly protected
+    init {
+        loadProducts()
+    }
 
-## Patterns
+    private fun loadProducts() {
+        viewModelScope.launch {
+            getProductsUseCase()
+                .catch { e ->
+                    _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+                }
+                .collect { products ->
+                    _uiState.update {
+                        it.copy(products = products, isLoading = false)
+                    }
+                }
+        }
+    }
 
-### Pattern 1: Structured Approach
-- Start with requirements analysis
-- Design before implementing
-- Validate against acceptance criteria
-- Document decisions and rationale
+    fun refresh() {
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        loadProducts()
+    }
+}
+```
 
-### Pattern 2: Iterative Refinement
-- Begin with a minimal viable implementation
-- Gather feedback early and often
-- Refine based on real-world usage
-- Continuously improve based on metrics
+### Compose UI with collectAsStateWithLifecycle
+```kotlin
+@Composable
+fun ProductListScreen(
+    viewModel: ProductListViewModel = hiltViewModel()
+) {
+    // Stops collection when app is backgrounded — battery efficient
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-### Pattern 3: Convention Over Configuration
-- Follow established conventions where they exist
-- Configure only what needs to deviate from defaults
-- Document any non-standard choices
-- Prefer explicit over implicit behavior
+    Box(modifier = Modifier.fillMaxSize()) {
+        when {
+            uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            uiState.errorMessage != null -> ErrorMessage(
+                message = uiState.errorMessage!!,
+                onRetry = viewModel::refresh
+            )
+            else -> ProductList(products = uiState.products)
+        }
+    }
+}
+```
 
-### Pattern 4: Defense in Depth
-- Validate at multiple levels
-- Handle errors gracefully at each layer
-- Provide meaningful feedback for failures
-- Log important events for debugging
+---
 
-## Anti-Patterns
+## Room: Entity, DAO, Repository
 
-### Anti-Pattern 1: Premature Optimization
-- Optimizing before understanding the actual bottleneck
-- Adding complexity without measured need
-- Sacrificing readability for marginal performance gains
+```kotlin
+// Entity
+@Entity(tableName = "products")
+data class ProductEntity(
+    @PrimaryKey val id: String,
+    @ColumnInfo(name = "title") val title: String,
+    @ColumnInfo(name = "price") val price: Double,
+    @ColumnInfo(name = "last_updated") val lastUpdated: Long = System.currentTimeMillis()
+)
 
-### Anti-Pattern 2: Copy-Paste Without Understanding
-- Duplicating code without understanding its purpose
-- Propagating bugs through mechanical copying
-- Missing opportunities for abstraction
+// DAO
+@Dao
+interface ProductDao {
+    @Query("SELECT * FROM products ORDER BY title ASC")
+    fun observeAll(): Flow<List<ProductEntity>>
 
-### Anti-Pattern 3: Ignoring Standards
-- Deviating from conventions without clear justification
-- Creating inconsistency across the codebase
-- Making onboarding harder for new contributors
+    @Query("SELECT * FROM products WHERE id = :id")
+    suspend fun getById(id: String): ProductEntity?
 
-### Anti-Pattern 4: Over-Engineering
-- Building for hypothetical future requirements
-- Adding abstraction layers without clear benefit
-- Creating complex solutions for simple problems
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(products: List<ProductEntity>)
 
-## References
+    @Query("DELETE FROM products")
+    suspend fun deleteAll()
 
-### Documentation
-- Official documentation for related tools and frameworks
-- Industry standards and specifications
-- Community best practices and guides
+    @Transaction
+    suspend fun replaceAll(products: List<ProductEntity>) {
+        deleteAll()
+        insertAll(products)
+    }
+}
 
-### Learning Resources
-- Tutorials and walkthroughs for beginners
-- Advanced guides for experienced practitioners
-- Case studies and real-world examples
+// Repository
+class ProductRepository @Inject constructor(
+    private val dao: ProductDao,
+    private val api: ProductApi,
+) {
+    fun observeProducts(): Flow<List<Product>> =
+        dao.observeAll()
+            .map { entities -> entities.map { it.toDomain() } }
+            .flowOn(Dispatchers.IO)
 
-### Tools
-- Development tools for kotlin-android
-- Testing and validation tools
-- Monitoring and observability tools
+    suspend fun refreshProducts() = withContext(Dispatchers.IO) {
+        val products = api.fetchProducts()
+        dao.replaceAll(products.map { it.toEntity() })
+    }
+}
+```
+
+---
+
+## Hilt: Module Setup
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object NetworkModule {
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor())
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(client: OkHttpClient): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(BuildConfig.API_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideProductApi(retrofit: Retrofit): ProductApi =
+        retrofit.create(ProductApi::class.java)
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindProductRepository(
+        impl: ProductRepositoryImpl
+    ): ProductRepository
+}
+```
+
+---
+
+## Compose: Recomposition Optimization
+
+```kotlin
+// Bad: entire screen recomposes when any part of state changes
+@Composable
+fun Screen(viewModel: MyViewModel = hiltViewModel()) {
+    val state = viewModel.uiState.collectAsStateWithLifecycle().value
+    HeavyComponent(data = state.someField)
+    AnotherComponent(count = state.count)
+}
+
+// Good: each component subscribes to only what it needs
+@Composable
+fun Screen(viewModel: MyViewModel = hiltViewModel()) {
+    val someField by remember {
+        viewModel.uiState.map { it.someField }
+    }.collectAsStateWithLifecycle(initialValue = "")
+
+    val count by remember {
+        viewModel.uiState.map { it.count }
+    }.collectAsStateWithLifecycle(initialValue = 0)
+
+    HeavyComponent(data = someField)
+    AnotherComponent(count = count)
+}
+
+// derivedStateOf: compute from observed state, recompose only on derived change
+@Composable
+fun FilteredList(allItems: List<Item>, query: String) {
+    val filtered by remember(allItems) {
+        derivedStateOf {
+            allItems.filter { it.name.contains(query, ignoreCase = true) }
+        }
+    }
+    LazyColumn { items(filtered) { ItemRow(it) } }
+}
+```
+
+---
+
+## WorkManager: Background Sync
+
+```kotlin
+class SyncWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val repository: ProductRepository
+) : CoroutineWorker(context, params) {
+
+    override suspend fun doWork(): Result {
+        return try {
+            repository.refreshProducts()
+            Result.success()
+        } catch (e: Exception) {
+            if (runAttemptCount < 3) Result.retry() else Result.failure()
+        }
+    }
+
+    @AssistedFactory
+    interface Factory : ChildWorkerFactory
+}
+
+// Scheduling
+fun scheduleDailySync(context: Context) {
+    val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .setRequiresBatteryNotLow(true)
+        .build()
+
+    val request = PeriodicWorkRequestBuilder<SyncWorker>(1, TimeUnit.DAYS)
+        .setConstraints(constraints)
+        .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 15, TimeUnit.MINUTES)
+        .build()
+
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        "daily_sync",
+        ExistingPeriodicWorkPolicy.KEEP, // Don't replace if already scheduled
+        request
+    )
+}
+```

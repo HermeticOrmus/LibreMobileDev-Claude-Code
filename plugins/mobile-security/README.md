@@ -1,46 +1,50 @@
 # Mobile Security
 
-Secure storage, cert pinning, biometrics, obfuscation
+iOS Keychain, Android Keystore, certificate pinning, biometric authentication, network security config, R8/ProGuard obfuscation.
 
 ## What's Included
 
 ### Agents
-- **Mobile Security Engineer** - Specialized agent for Secure storage, cert pinning, biometrics, obfuscation
+- **mobile-security-engineer** - Expert in Keychain Services, EncryptedSharedPreferences, TrustKit, BiometricPrompt, OWASP Mobile Top 10
 
 ### Commands
-- `/mobile-sec` - Quick-access command for mobile-security workflows
+- `/mobile-sec` - Implement security controls: `keychain`, `pin`, `biometric`, `obfuscate`, `audit`
 
 ### Skills
-- **Mobile Security Patterns** - Pattern library and knowledge base for mobile-security
+- **mobile-security-patterns** - iOS Keychain CRUD with accessibility options, biometric-gated Keychain items, URL session certificate pinning, Android EncryptedSharedPreferences, Keystore-backed BiometricPrompt, Network Security Config XML
 
 ## Quick Start
 
-1. Copy this plugin to your Claude Code plugins directory
-2. Use the agent for guided, multi-step workflows
-3. Use the command for quick, targeted operations
-4. Reference the skill for patterns and best practices
+```bash
+# iOS secure token storage
+/mobile-sec keychain --ios
 
-## Usage Examples
+# Android cert pinning
+/mobile-sec pin --android
 
-```
-# Use the command directly
-/mobile-sec analyze
+# Biometric auth with hardware-backed key
+/mobile-sec biometric --android --strict
 
-# Use the command with specific input
-/mobile-sec generate --context "your project"
-
-# Reference patterns from the skill
-"Apply mobile-security-patterns patterns to this implementation"
+# Scan code for anti-patterns
+/mobile-sec audit --ios
 ```
 
-## Key Patterns
+## Keychain Accessibility Options
 
-- Follow established conventions for mobile-security
-- Validate inputs before processing
-- Document decisions and rationale
-- Test outputs against requirements
-- Iterate based on feedback
+| Option | Accessible when locked | iCloud sync | Device transfer |
+|--------|----------------------|-------------|-----------------|
+| `WhenUnlockedThisDeviceOnly` | No | No | No |
+| `WhenUnlocked` | No | Yes | Yes |
+| `AfterFirstUnlockThisDeviceOnly` | Yes (after unlock) | No | No |
+| `AfterFirstUnlock` | Yes (after unlock) | Yes | Yes |
 
-## Related Plugins
+Use `WhenUnlockedThisDeviceOnly` for auth tokens and credentials — most restrictive.
 
-Check the main README for related plugins in this collection.
+## Critical Rules
+
+- Never store credentials in UserDefaults (iOS) or SharedPreferences (Android) — not encrypted
+- Always pin public keys (SPKI hash), not leaf certificates — survives cert rotation
+- Set `android:allowBackup="false"` to prevent `adb backup` data extraction
+- Use `setInvalidatedByBiometricEnrollment(true)` — prevents new enrolled fingerprint from accessing existing keys
+- Remove all `NSLog` / `Log.d` containing tokens, passwords, or PII before release
+- Never set `NSAllowsArbitraryLoads: true` in production builds
