@@ -1,128 +1,95 @@
 <p align="center">
-  <strong>LibreMobileDev-Claude-Code</strong>
+  <img src="https://ormus.solutions/mascot/chain_braces_to_swan.gif" alt="LibreMobileDev Claude Code" width="128" style="image-rendering: pixelated;" />
+</p>
+
+<h1 align="center">LibreMobileDev Claude Code</h1>
+
+<p align="center">
+  <em>Mobile app development with Claude Code — 20 plugins for Flutter, React Native, native iOS, native Android, and the operational layer between</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/plugins-20-859900?style=flat-square" alt="20 Plugins" />
-  <img src="https://img.shields.io/badge/license-MIT-859900?style=flat-square" alt="MIT License" />
-  <img src="https://img.shields.io/badge/claude--code-plugins-859900?style=flat-square" alt="Claude Code Plugins" />
-  <img src="https://img.shields.io/badge/mobile-dev-859900?style=flat-square" alt="Mobile Dev" />
+  <a href="https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code/stargazers"><img src="https://img.shields.io/github/stars/HermeticOrmus/LibreMobileDev-Claude-Code?style=flat-square&color=aa8142" alt="Stars" /></a>
+  <img src="https://img.shields.io/badge/Mobile-aa8142?style=flat-square&logo=flutter&logoColor=white" alt="Mobile" />
+  <img src="https://img.shields.io/badge/Claude_Code-aa8142?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code" />
 </p>
 
 ---
 
-A curated collection of Claude Code plugins for mobile app development. From Flutter to Swift, React Native to Kotlin, covering the full mobile lifecycle from architecture to app store.
+> **Skills, agents, commands, and workflows for mobile app development with Claude Code.**
 
----
+Mobile is unforgiving. A single store rejection can delay launch by weeks. A memory leak ships to millions of users before you notice. Cross-platform engineering decisions (Flutter? React Native? Native?) lock in years of decisions. **LibreMobileDev gives Claude Code the mobile-specific expertise that web-focused AI coding lacks.**
 
-## Plugins
+Twenty plugins covering Flutter, React Native, native iOS (Swift/SwiftUI), native Android (Kotlin/Jetpack Compose), plus the operational layer (CI/CD, store optimization, payments, security, performance).
 
-| # | Plugin | Description | Category |
-|---|--------|-------------|----------|
-| 1 | [accessibility-mobile](plugins/accessibility-mobile/) | VoiceOver, TalkBack, semantic markup, WCAG compliance | `a11y` `ux` |
-| 2 | [app-store-optimization](plugins/app-store-optimization/) | ASO, metadata, screenshots, A/B testing, ratings strategy | `marketing` `aso` |
-| 3 | [camera-media](plugins/camera-media/) | Camera APIs, photo/video capture, image processing, filters | `media` `hardware` |
-| 4 | [cross-platform-patterns](plugins/cross-platform-patterns/) | Shared code, platform channels, conditional rendering | `architecture` `cross-platform` |
-| 5 | [deep-linking](plugins/deep-linking/) | Universal links, app links, deferred deep links, navigation | `navigation` `linking` |
-| 6 | [flutter-development](plugins/flutter-development/) | Flutter widgets, Dart, state management, packages | `flutter` `dart` |
-| 7 | [gesture-interaction](plugins/gesture-interaction/) | Touch gestures, haptics, motion, custom gesture recognizers | `ux` `interaction` |
-| 8 | [kotlin-android](plugins/kotlin-android/) | Kotlin, Jetpack Compose, Android SDK, lifecycle management | `android` `kotlin` |
-| 9 | [location-services](plugins/location-services/) | GPS, geofencing, maps, location tracking, geocoding | `location` `hardware` |
-| 10 | [mobile-analytics](plugins/mobile-analytics/) | Event tracking, crash reporting, user analytics, funnels | `analytics` `telemetry` |
-| 11 | [mobile-architecture](plugins/mobile-architecture/) | MVVM, Clean Architecture, BLoC, Redux for mobile | `architecture` `patterns` |
-| 12 | [mobile-ci-cd](plugins/mobile-ci-cd/) | Fastlane, Bitrise, App Center, code signing, distribution | `devops` `ci-cd` |
-| 13 | [mobile-payments](plugins/mobile-payments/) | In-app purchases, subscriptions, payment gateways | `payments` `monetization` |
-| 14 | [mobile-performance](plugins/mobile-performance/) | Launch time, memory, battery, network, UI jank optimization | `performance` `optimization` |
-| 15 | [mobile-security](plugins/mobile-security/) | Secure storage, cert pinning, biometrics, obfuscation | `security` `privacy` |
-| 16 | [mobile-testing](plugins/mobile-testing/) | Widget tests, integration tests, UI automation, device farms | `testing` `qa` |
-| 17 | [offline-first](plugins/offline-first/) | Local databases, sync strategies, conflict resolution, caching | `data` `offline` |
-| 18 | [push-notifications](plugins/push-notifications/) | FCM, APNs, notification channels, rich notifications | `notifications` `messaging` |
-| 19 | [react-native](plugins/react-native/) | React Native components, navigation, native modules, Expo | `react-native` `javascript` |
-| 20 | [swift-ios](plugins/swift-ios/) | Swift, SwiftUI, UIKit, Combine, iOS SDK | `ios` `swift` |
+## The 20 plugins
 
-## Quick Start
+### Frameworks
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code.git
-   ```
+| Plugin | Domain |
+|---|---|
+| **flutter-development** ⭐ | Flutter 3.x, widgets, state management, platform channels, build modes |
+| react-native | RN 0.7x+, new architecture (Fabric), navigation, native modules |
+| swift-ios | SwiftUI, UIKit, Combine, Core Data, App Intents |
+| kotlin-android | Jetpack Compose, Coroutines, Hilt, Room, Material 3 |
+| cross-platform-patterns | When to share code, when not to, common abstractions |
 
-2. **Copy a plugin into your project**
-   ```bash
-   # Copy the Flutter plugin's CLAUDE.md agent into your project
-   cp plugins/flutter-development/agents/flutter-developer/AGENT.md your-project/.claude/agents/
+### Performance + quality
 
-   # Or copy a command
-   cp plugins/mobile-testing/commands/mobile-test/COMMAND.md your-project/.claude/commands/
-   ```
+| Plugin | Domain |
+|---|---|
+| mobile-performance | Startup time, jank profiling, memory leaks, battery |
+| mobile-testing | Unit, widget, integration, E2E across platforms |
+| mobile-architecture | MVVM, BLoC, Riverpod, Redux, clean architecture |
+| accessibility-mobile | Screen readers, color contrast, gesture alternatives, dynamic type |
+| offline-first | Local-first storage, sync, conflict resolution |
 
-3. **Use the learning paths**
-   ```bash
-   # Start with the beginner path if you are new to mobile
-   cat learning-paths/beginner.md
-   ```
+### Features + integrations
 
-4. **Set up hooks** (optional)
-   ```bash
-   cp hooks/session-start.sh your-project/.claude/hooks/
-   cp hooks/pre-tool-use.sh your-project/.claude/hooks/
-   cp hooks/post-tool-use.sh your-project/.claude/hooks/
-   ```
+| Plugin | Domain |
+|---|---|
+| push-notifications | FCM, APNs, deep linking from notification, rich notifications |
+| deep-linking | URL schemes, universal links / App Links, App Banner |
+| camera-media | Camera APIs, image picker, video recording, codecs |
+| location-services | GPS, geofencing, background location (with permission discipline) |
+| gesture-interaction | Touch, swipe, pinch, custom gesture recognizers |
+| mobile-payments | Apple Pay, Google Pay, IAP, third-party (Stripe SDKs) |
 
-## Architecture
+### Ops + distribution
 
-```
-LibreMobileDev-Claude-Code/
-├── plugins/                    # 20 mobile dev plugins
-│   └── {plugin-name}/
-│       ├── README.md           # Plugin overview and usage
-│       ├── agents/             # Agent definitions (AGENT.md)
-│       ├── commands/           # Command definitions (COMMAND.md)
-│       └── skills/             # Skill definitions (SKILL.md)
-├── learning-paths/             # Structured learning progressions
-│   ├── beginner.md             # Mobile fundamentals
-│   ├── intermediate.md         # State, APIs, testing
-│   └── advanced.md             # Performance, CI/CD, architecture
-├── hooks/                      # Session and tool hooks
-│   ├── session-start.sh        # Framework detection
-│   ├── pre-tool-use.sh         # Compatibility checks
-│   └── post-tool-use.sh        # Build verification
-├── templates/                  # Project templates
-│   └── CLAUDE.md               # Mobile dev project template
-├── CONTRIBUTING.md             # How to contribute plugins
-├── CODE_OF_CONDUCT.md          # Contributor Covenant v2.1
-├── CHANGELOG.md                # Release history
-└── LICENSE                     # MIT License
+| Plugin | Domain |
+|---|---|
+| mobile-ci-cd | Fastlane, Codemagic, Bitrise, GitHub Actions for mobile, code signing |
+| app-store-optimization | Keyword research, screenshots, store reviews, ratings management |
+| mobile-analytics | Mixpanel, Amplitude, Firebase Analytics, privacy-respecting alternatives |
+| mobile-security | Cert pinning, keychain/keystore, jailbreak/root detection, OWASP Mobile Top 10 |
+
+⭐ = depth-complete. Remaining 19 shell-improved.
+
+## Quick start
+
+```bash
+git clone https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code.git ~/projects/LibreMobileDev-Claude-Code
+cd ~/projects/LibreMobileDev-Claude-Code
+./setup.sh
 ```
 
-Each plugin follows the **Agent / Command / Skill** pattern:
-- **Agents** define a specialist persona with deep domain expertise
-- **Commands** provide structured triggers for common workflows
-- **Skills** encode reusable patterns, anti-patterns, and references
+```
+/flutter design a state management strategy for an app with ~50 screens, offline-first reads, online writes with conflict resolution, push notifications driving deep links into specific screens. Riverpod or BLoC?
+```
 
-## Contributing
+See [QUICK_START.md](QUICK_START.md).
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding or improving plugins.
+## Learning paths
+
+- [Beginner](learning-paths/beginner.md) — mobile mindset, your first deployed app
+- [Intermediate](learning-paths/intermediate.md) — store certification, CI/CD, analytics
+- [Advanced](learning-paths/advanced.md) — offline-first, multi-platform code sharing, performance at scale
+
+## Disclaimer
+
+Building mobile apps for regulated domains has compliance requirements this kit doesn't replace (HIPAA, COPPA, GDPR consent). App Store + Play Store reviews enforce additional policies (privacy nutrition labels, ATT prompts, data safety section).
 
 ## License
 
-[MIT](LICENSE) -- Copyright (c) 2025-2026 Hermetic Ormus
-
----
-
-## Part of the Libre Open-Source Stack for Claude Code
-
-This repository is part of a growing family of open-source toolkits for Claude Code, each focused on a specific lane:
-
-- [LibreUIUX-Claude-Code](https://github.com/HermeticOrmus/LibreUIUX-Claude-Code) — UI/UX development (152 agents, 70 plugins, 76 commands, 74 skills)
-- [LibreArch-Claude-Code](https://github.com/HermeticOrmus/LibreArch-Claude-Code) — Software architecture and system design
-- [LibreCopy-Claude-Code](https://github.com/HermeticOrmus/LibreCopy-Claude-Code) — Technical writing and documentation engineering
-- [LibreDevOps-Claude-Code](https://github.com/HermeticOrmus/LibreDevOps-Claude-Code) — DevOps engineering and infrastructure automation
-- [LibreEmbed-Claude-Code](https://github.com/HermeticOrmus/LibreEmbed-Claude-Code) — Embedded systems, firmware, and IoT development
-- [LibreFinTech-Claude-Code](https://github.com/HermeticOrmus/LibreFinTech-Claude-Code) — Financial technology development
-- [LibreGEO-Claude-Code](https://github.com/HermeticOrmus/LibreGEO-Claude-Code) — AI-search optimization (ChatGPT, Perplexity, Gemini, Google AI Overviews)
-- [LibreGameDev-Claude-Code](https://github.com/HermeticOrmus/LibreGameDev-Claude-Code) — Game development across Godot, Unity, Unreal
-- [LibreMLOps-Claude-Code](https://github.com/HermeticOrmus/LibreMLOps-Claude-Code) — ML engineering and AI operations
-- [LibreSecOps-Claude-Code](https://github.com/HermeticOrmus/LibreSecOps-Claude-Code) — Security operations
-
-Star the family, not just one — that's how the suite stays coherent.
+MIT.

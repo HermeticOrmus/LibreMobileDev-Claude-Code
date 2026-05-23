@@ -1,14 +1,15 @@
 # Changelog
 
-All notable changes to LibreMobileDev for Claude Code will be documented in this file.
+## [0.2.0] — 2026-05-23
+- LibreUIUX doc chrome
+- **flutter-development** depth-complete
+- 3-tier learning paths
+- 20 plugins: 1 depth-complete, 19 shell-improved
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+### v0.3-v0.5 priorities
+- v0.3: react-native, swift-ios, kotlin-android
+- v0.4: mobile-performance, mobile-testing, mobile-ci-cd
+- v0.5: mobile-security, push-notifications, offline-first
 
-## [0.1.0] - 2026-02-24
-
-### Added
-- Initial plugin collection
-- Learning paths (beginner, intermediate, advanced)
-- Automated hooks (session-start, pre-tool-use, post-tool-use)
-- Contributing guidelines and Code of Conduct
-- MIT License
+## [0.1.0]
+20 plugin shells. Initial release.

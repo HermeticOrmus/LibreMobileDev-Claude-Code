@@ -1,48 +1,23 @@
 # Flutter Development
 
-Flutter widgets, Dart, state management (Riverpod, BLoC), custom painter, platform channels, Dart isolates.
+> Flutter 3.x expertise — widgets, state management, platform channels, build modes, deployment. The patterns that survive the gap from tutorial to production.
 
-## What's Included
+## Contents
+- **Agent**: `flutter-engineer` — senior Flutter developer
+- **Command**: `/flutter` — widget design, state mgmt, platform integration
+- **Skill**: pattern library for widget trees, state, platform channels, performance
 
-### Agents
-- **flutter-developer** - Expert in widget tree, Riverpod providers, BLoC pattern, CustomPainter Canvas API, Flutter rendering pipeline, isolates for heavy work
+## Key capabilities
 
-### Commands
-- `/flutter` - Create widgets, implement state, paint custom visuals, optimize rebuilds
+- **Widget design**: composition over inheritance, stateless vs stateful, const everywhere, key usage
+- **State management**: Riverpod (preferred 2026), BLoC, Provider, GetX — when each fits
+- **Platform channels**: MethodChannel, EventChannel, BinaryMessenger; pigeon for type-safe codegen
+- **Build modes**: debug vs profile vs release; obfuscation; split-debug-info; size optimization
+- **Performance**: 60fps target, jank detection, Skia profiling, isolates for heavy work
+- **Testing**: widget tests, golden tests, integration tests, contract tests for platform channels
+- **Native integration**: Swift/Kotlin plugin authoring, FFI for native libs
+- **Deployment**: signing, store builds, code-push (Shorebird), CI/CD
 
-### Skills
-- **flutter-patterns** - Riverpod StateNotifierProvider, BLoC event/state, CustomPainter, isolate compute(), rebuild optimization with select()
+## Compatibility
 
-## Quick Start
-
-```bash
-# Scaffold a Riverpod-managed feature
-/flutter create --riverpod --feature cart
-
-# Implement BLoC for authentication
-/flutter state --bloc --feature auth
-
-# Custom painter for data visualization
-/flutter paint --feature waveform
-
-# Fix excessive rebuilds
-/flutter optimize
-```
-
-## State Management Comparison
-
-| | Riverpod | BLoC | Provider |
-|---|---------|------|----------|
-| Learning curve | Medium | Medium-High | Low |
-| Testability | Excellent | Excellent | Good |
-| Async support | Built-in (FutureProvider) | Manual | Manual |
-| Recommended for | New projects | Event-heavy flows | Legacy |
-| Type safety | Full | Full | Full |
-
-## Key Rules
-
-- `const` constructors wherever possible — eliminates rebuilds
-- `ref.watch(provider.select(...))` narrows rebuild scope
-- Never put business logic in `build()` methods
-- Use `ListView.builder` for any list with more than ~20 items
-- Background work goes in `compute()` or `Isolate.run()`
+Flutter 3.16+, Dart 3.x, all major platforms (iOS, Android, web, macOS, Windows, Linux). Older versions noted where APIs differ.
