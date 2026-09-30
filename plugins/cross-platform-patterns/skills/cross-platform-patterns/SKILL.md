@@ -1,6 +1,6 @@
 ---
-name: "cross-platform-patterns"
-description: "Cross Platform Patterns"
+name: cross-platform-patterns
+description: "Bridge code for Flutter MethodChannel and EventChannel, Kotlin Multiplatform expect/actual with Ktor and SQLDelight, React Native TurboModule specs, and platform detection. Use when sharing logic across iOS and Android or calling native APIs from a cross-platform app."
 ---
 
 # Cross Platform Patterns

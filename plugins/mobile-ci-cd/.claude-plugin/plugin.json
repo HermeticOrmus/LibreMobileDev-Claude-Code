@@ -1,7 +1,7 @@
 {
   "name": "mobile-ci-cd",
   "version": "1.0.0",
-  "description": "Fastlane, GitHub Actions, code signing (iOS match, Android keystore), TestFlight, Firebase App Distribution, Google Play.",
+  "description": "Mobile CI/CD: Fastlane lanes, GitHub Actions for iOS and Android, code signing with match and keystores, and TestFlight, Firebase App Distribution, and Google Play releases.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -11,7 +11,10 @@
   "license": "MIT",
   "keywords": [
     "mobile",
-    "ci",
-    "cd"
+    "ci-cd",
+    "fastlane",
+    "code-signing",
+    "testflight",
+    "github-actions"
   ]
 }

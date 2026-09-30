@@ -1,6 +1,6 @@
 ---
-name: "mobile-cicd-patterns"
-description: "Mobile CI/CD Patterns"
+name: mobile-cicd-patterns
+description: "Fastfile lanes for iOS and Android distribution, a GitHub Actions matrix for both platforms, Gradle signing config, and the secrets each platform needs. Use when building or fixing a mobile build and release pipeline."
 ---
 
 # Mobile CI/CD Patterns

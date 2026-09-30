@@ -1,7 +1,7 @@
 {
   "name": "deep-linking",
   "version": "1.0.0",
-  "description": "iOS Universal Links, Android App Links, custom URL schemes, deferred deep linking, in-app routing.",
+  "description": "Deep linking for iOS Universal Links, Android App Links, custom URL schemes, deferred deep links, and in-app routing, with the server association files each needs.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,7 +10,10 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
-    "deep",
-    "linking"
+    "mobile",
+    "deep-linking",
+    "universal-links",
+    "app-links",
+    "routing"
   ]
 }

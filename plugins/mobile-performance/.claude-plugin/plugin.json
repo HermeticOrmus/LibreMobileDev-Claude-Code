@@ -1,7 +1,7 @@
 {
   "name": "mobile-performance",
   "version": "1.0.0",
-  "description": "iOS Instruments, Android Profiler, Flutter DevTools, launch time, memory management, rendering at 60/120fps.",
+  "description": "Mobile performance: profiling with Instruments, Android Profiler, and Flutter DevTools, launch time, memory, frame drops, list rendering, and battery.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -11,6 +11,10 @@
   "license": "MIT",
   "keywords": [
     "mobile",
-    "performance"
+    "performance",
+    "profiling",
+    "launch-time",
+    "memory",
+    "jank"
   ]
 }

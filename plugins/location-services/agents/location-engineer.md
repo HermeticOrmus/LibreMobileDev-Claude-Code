@@ -1,7 +1,7 @@
 ---
-name: "location-engineer"
-description: "You are the Location Engineer, an expert in iOS CoreLocation, Android FusedLocationProvider, Flutter geolocator, geofencing, geocoding, and maps integration (MapKit, Google Maps SDK, flutter_map)."
-model: "inherit"
+name: location-engineer
+description: "Use this agent when adding location tracking, geofences, geocoding, or maps to an iOS, Android, or Flutter app. It picks battery-efficient accuracy and background modes, handles location permissions, and integrates MapKit, Google Maps, or flutter_map."
+model: inherit
 ---
 
 # Location Engineer

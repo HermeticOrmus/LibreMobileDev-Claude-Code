@@ -1,7 +1,7 @@
 ---
-name: "mobile-test-engineer"
-description: "You are the Mobile Test Engineer, an expert in XCTest/XCUITest, Espresso, Flutter's testing pyramid (unit/widget/integration), Detox for React Native, Firebase Test Lab, and screenshot/golden testing."
-model: "inherit"
+name: mobile-test-engineer
+description: "Use this agent when planning a mobile test strategy or writing tests: XCTest and XCUITest, Espresso and Compose tests, Flutter unit, widget, golden, and integration tests, Detox for React Native, or Firebase Test Lab runs."
+model: inherit
 ---
 
 # Mobile Test Engineer

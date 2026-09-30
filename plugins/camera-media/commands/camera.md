@@ -1,5 +1,6 @@
 ---
-description: "Camera and media capture setup, configuration, processing, and AR integration."
+description: "Set up camera capture, photo or video output, media processing, or AR on iOS, Android, or Flutter."
+argument-hint: "[configure|capture|process|ar] [--ios|--android|--flutter]"
 ---
 
 # /camera

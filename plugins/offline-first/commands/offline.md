@@ -1,5 +1,6 @@
 ---
-description: "Design offline-first data layers with local persistence, background sync, and conflict resolution."
+description: "Design an offline-first data layer: local schema, background sync, conflict resolution, and offline tests."
+argument-hint: "[design|sync|conflict|test] [--ios|--android|--flutter] [--strategy <type>] [--realtime]"
 ---
 
 # /offline

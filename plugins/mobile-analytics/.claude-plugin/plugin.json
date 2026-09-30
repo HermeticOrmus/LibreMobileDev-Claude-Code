@@ -1,7 +1,7 @@
 {
   "name": "mobile-analytics",
   "version": "1.0.0",
-  "description": "Firebase Analytics, Amplitude, Mixpanel, AppsFlyer attribution, Crashlytics, Sentry — event taxonomy, funnels, crash reporting.",
+  "description": "Mobile analytics and crash reporting: event taxonomy, funnels, Firebase Analytics, Amplitude, Mixpanel, AppsFlyer attribution, Crashlytics, and Sentry.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -11,6 +11,10 @@
   "license": "MIT",
   "keywords": [
     "mobile",
-    "analytics"
+    "analytics",
+    "attribution",
+    "crash-reporting",
+    "firebase",
+    "funnels"
   ]
 }

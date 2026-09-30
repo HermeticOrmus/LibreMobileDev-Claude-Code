@@ -1,7 +1,7 @@
 {
   "name": "flutter-development",
   "version": "1.0.0",
-  "description": "Flutter 3.16+, Dart 3.x, all major platforms (iOS, Android, web, macOS, Windows, Linux).",
+  "description": "Flutter 3.x development: widget design, Riverpod and BLoC state management, pigeon platform channels, custom painting, isolates, and performance profiling.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,7 +10,11 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
+    "mobile",
     "flutter",
-    "development"
+    "dart",
+    "riverpod",
+    "bloc",
+    "widgets"
   ]
 }

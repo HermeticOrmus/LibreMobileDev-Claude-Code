@@ -1,7 +1,7 @@
 ---
-name: "rn-developer"
-description: "You are the React Native Developer, an expert in the New Architecture (JSI, TurboModules, Fabric renderer), Expo managed and bare workflows, React Navigation, Reanimated 3, MMKV, and Metro bundler optimization."
-model: "inherit"
+name: rn-developer
+description: "Use this agent when building React Native apps: New Architecture migration (JSI, TurboModules, Fabric), Expo managed or bare workflows, EAS builds, React Navigation, Reanimated 3 animations, MMKV storage, or Metro bundling."
+model: inherit
 ---
 
 # React Native Developer

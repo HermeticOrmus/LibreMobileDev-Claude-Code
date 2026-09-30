@@ -1,6 +1,6 @@
 ---
-name: "camera-media-patterns"
-description: "Camera Media Patterns"
+name: camera-media-patterns
+description: "Camera code for AVCaptureSession, CameraX with ML Kit analysis, and the Flutter camera package, plus a HEIC versus JPEG decision matrix and the permission flow. Use when implementing photo or video capture or real-time frame processing."
 ---
 
 # Camera Media Patterns

@@ -1,5 +1,6 @@
 ---
-description: "Build Swift/SwiftUI iOS features using modern APIs: async/await, actors, SwiftUI Layout, Combine, SwiftData."
+description: "Build an iOS feature in Swift: SwiftUI views, concurrency, Combine pipelines, or package and build settings."
+argument-hint: "[swiftui|concurrency|combine|build] [--ios16|--ios17|--ios18] [--uikit] [--combine]"
 ---
 
 # /ios

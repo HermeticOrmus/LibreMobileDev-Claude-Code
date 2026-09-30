@@ -1,6 +1,6 @@
 ---
-name: "swift-ios-patterns"
-description: "Swift iOS Patterns"
+name: swift-ios-patterns
+description: "Swift code: actors with AsyncStream, SwiftUI PreferenceKey and a custom Layout, UIViewRepresentable, Combine debounced search, and @Observable with SwiftData. Use when writing modern Swift and SwiftUI features."
 ---
 
 # Swift iOS Patterns

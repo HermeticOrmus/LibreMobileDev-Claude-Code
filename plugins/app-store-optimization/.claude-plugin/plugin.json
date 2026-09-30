@@ -1,7 +1,7 @@
 {
   "name": "app-store-optimization",
   "version": "1.0.0",
-  "description": "ASO, metadata, screenshots, A/B testing, ratings",
+  "description": "App Store and Google Play optimization: keyword fields, listing copy, screenshot sequences, store A/B tests, and rating prompts.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,8 +10,11 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
-    "app",
-    "store",
-    "optimization"
+    "mobile",
+    "aso",
+    "app-store",
+    "google-play",
+    "keywords",
+    "screenshots"
   ]
 }

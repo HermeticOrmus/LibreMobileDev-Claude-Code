@@ -1,5 +1,6 @@
 ---
-description: "Jetpack Compose UI, ViewModel + StateFlow, Room database, Hilt DI, WorkManager."
+description: "Generate Android code in Kotlin: a Compose screen, a ViewModel with UI state, Room entities and DAOs, or a Hilt module."
+argument-hint: "[compose|viewmodel|room|hilt] [--feature <name>] [--mvi] [--flow] [--workmanager]"
 ---
 
 # /android

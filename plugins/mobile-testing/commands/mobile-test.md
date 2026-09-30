@@ -1,5 +1,6 @@
 ---
-description: "Write unit tests, widget tests, UI automation, and configure device farm runs."
+description: "Write unit, UI, or golden tests, or configure Firebase Test Lab device runs, for a mobile app."
+argument-hint: "[unit|ui|golden|cloud] [--ios|--android|--flutter|--rn] [--coverage]"
 ---
 
 # /mobile-test

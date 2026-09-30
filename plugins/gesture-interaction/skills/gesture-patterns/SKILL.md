@@ -1,6 +1,6 @@
 ---
-name: "gesture-patterns"
-description: "Gesture Patterns"
+name: gesture-patterns
+description: "Gesture code for UIPanGestureRecognizer with velocity, custom UIGestureRecognizer subclasses, Compose gesture modifiers, Flutter fling animations, and haptic timing. Use when building drag, swipe, or fling interactions or deciding when to fire haptics."
 ---
 
 # Gesture Patterns

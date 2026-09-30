@@ -1,6 +1,6 @@
 ---
-name: "mobile-testing-patterns"
-description: "Run unit + widget tests on every PR."
+name: mobile-testing-patterns
+description: "Test code for XCTest with async/await, XCUITest with accessibility identifiers, Espresso with Compose, Flutter widget, golden, and integration tests, and a testing pyramid per platform. Use when writing or structuring mobile tests."
 ---
 
 # Mobile Testing Patterns

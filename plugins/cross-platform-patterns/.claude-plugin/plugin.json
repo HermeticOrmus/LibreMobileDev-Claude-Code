@@ -1,7 +1,7 @@
 {
   "name": "cross-platform-patterns",
   "version": "1.0.0",
-  "description": "Flutter platform channels, Kotlin Multiplatform Mobile, React Native New Architecture, shared code architecture.",
+  "description": "Cross-platform mobile architecture: Flutter platform channels, Kotlin Multiplatform, React Native TurboModules, and the decision of what to share versus build natively.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,8 +10,11 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
-    "cross",
-    "platform",
-    "patterns"
+    "mobile",
+    "cross-platform",
+    "flutter",
+    "kotlin-multiplatform",
+    "react-native",
+    "platform-channels"
   ]
 }

@@ -1,5 +1,6 @@
 ---
-description: "Build React Native screens, navigation, animations, native modules, and Expo config."
+description: "Set up a React Native project, typed navigation, Reanimated animations, or EAS builds and OTA updates."
+argument-hint: "[init|navigate|animate|build] [--expo|--bare] [--new-arch] [--platform <ios|android|both>] [--typescript]"
 ---
 
 # /react-native

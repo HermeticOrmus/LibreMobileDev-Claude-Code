@@ -1,6 +1,6 @@
 ---
-name: "react-native-patterns"
-description: "React Native Patterns"
+name: react-native-patterns
+description: "React Native code: typed React Navigation, a Zustand store, a Reanimated 3 swipe-to-dismiss card, TanStack Query pagination, a TurboModule spec, and a FlatList performance checklist. Use when building React Native screens, state, or native modules."
 ---
 
 # React Native Patterns

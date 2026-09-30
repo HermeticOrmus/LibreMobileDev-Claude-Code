@@ -1,7 +1,7 @@
 {
   "name": "location-services",
   "version": "1.0.0",
-  "description": "iOS CoreLocation, Android FusedLocationProvider, Flutter geolocator, geofencing, geocoding, MapKit/Google Maps/flutter_map.",
+  "description": "Location on iOS, Android, and Flutter: CoreLocation, FusedLocationProvider, geolocator, geofencing, geocoding, maps, and battery-aware accuracy choices.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,7 +10,11 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
+    "mobile",
     "location",
-    "services"
+    "geofencing",
+    "maps",
+    "corelocation",
+    "gps"
   ]
 }

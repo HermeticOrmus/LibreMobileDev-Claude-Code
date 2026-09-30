@@ -1,7 +1,7 @@
 {
   "name": "accessibility-mobile",
   "version": "1.0.0",
-  "description": "iOS VoiceOver, Android TalkBack, Flutter Semantics, WCAG 2.1 compliance for production mobile apps.",
+  "description": "Mobile accessibility for iOS, Android, and Flutter: VoiceOver, TalkBack, Flutter Semantics, Dynamic Type, touch targets, and WCAG 2.1 audits.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,7 +10,11 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
+    "mobile",
     "accessibility",
-    "mobile"
+    "a11y",
+    "voiceover",
+    "talkback",
+    "wcag"
   ]
 }

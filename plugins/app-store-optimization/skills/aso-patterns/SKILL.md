@@ -1,6 +1,6 @@
 ---
-name: "aso-patterns"
-description: "Character count: 93 — leaves room to swap underperformers after ranking data accumulates."
+name: aso-patterns
+description: "App Store Optimization playbook: iOS keyword field rules, a title and subtitle framework, Google Play description structure, store A/B testing, review prompts, a seasonal calendar, and screenshot sizes. Use when writing store metadata or planning listing experiments."
 ---
 
 # ASO Patterns

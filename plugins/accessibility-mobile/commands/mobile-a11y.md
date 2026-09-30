@@ -1,5 +1,6 @@
 ---
-description: "Accessibility audit, fix, and testing for iOS, Android, and Flutter apps."
+description: "Audit, fix, or test the accessibility of iOS, Android, or Flutter UI code against WCAG 2.1."
+argument-hint: "[audit|fix|test|report|contrast] [--ios|--android|--flutter|--all]"
 ---
 
 # /mobile-a11y

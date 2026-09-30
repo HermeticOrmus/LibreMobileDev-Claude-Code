@@ -1,6 +1,6 @@
 ---
-name: "mobile-a11y-patterns"
-description: "Add transparent padding when visual size must remain small:"
+name: mobile-a11y-patterns
+description: "Code patterns for mobile accessibility: UIKit and SwiftUI modifiers, Dynamic Type, VoiceOver focus, Compose semantics, TalkBack live regions, 48dp touch targets, Flutter Semantics, and WCAG contrast math. Use when adding screen reader support or fixing accessibility issues in iOS, Android, or Flutter UI."
 ---
 
 # Mobile A11y Patterns

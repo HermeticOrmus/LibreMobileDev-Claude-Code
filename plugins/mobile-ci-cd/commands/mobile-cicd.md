@@ -1,5 +1,6 @@
 ---
-description: "Set up Fastlane lanes, GitHub Actions workflows, code signing, and distribution pipelines."
+description: "Set up Fastlane, code signing, beta distribution, or a production release pipeline for iOS and Android."
+argument-hint: "[setup|sign|distribute|release] [--ios|--android|--both] [--ci <service>] [--distribution <target>]"
 ---
 
 # /mobile-cicd

@@ -1,5 +1,6 @@
 ---
-description: "App Store and Google Play listing optimization: metadata, keywords, screenshots, monitoring."
+description: "Audit or optimize an App Store or Google Play listing: keywords, metadata, screenshots, and rank monitoring."
+argument-hint: "[audit|keywords|screenshots|monitor] [--ios|--android|--both] [--locale <code>]"
 ---
 
 # /aso
