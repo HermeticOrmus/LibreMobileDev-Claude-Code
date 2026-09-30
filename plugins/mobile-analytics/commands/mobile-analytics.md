@@ -1,5 +1,6 @@
 ---
-description: "Event tracking, funnel design, attribution setup, crash reporting configuration."
+description: "Instrument events, design a funnel, configure attribution, or set up crash reporting in a mobile app."
+argument-hint: "[track|funnel|attribute|crash] [--ios|--android|--flutter] [--sdk <name>] [--feature <name>]"
 ---
 
 # /mobile-analytics

@@ -1,6 +1,6 @@
 ---
-name: "kotlin-android-patterns"
-description: "Kotlin Android Patterns"
+name: kotlin-android-patterns
+description: "Kotlin Android patterns: ViewModel with StateFlow and Compose, a Room entity, DAO, and repository, Hilt modules, Compose recomposition fixes, and WorkManager background sync. Use when writing modern Android app code."
 ---
 
 # Kotlin Android Patterns

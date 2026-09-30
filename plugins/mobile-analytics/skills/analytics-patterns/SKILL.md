@@ -1,6 +1,6 @@
 ---
-name: "analytics-patterns"
-description: "Analytics Patterns"
+name: analytics-patterns
+description: "Analytics patterns: a vendor-neutral analytics service, Firebase event constraints and DebugView, Crashlytics error reporting, funnel event schemas, and AppsFlyer attribution. Use when instrumenting events or crash reporting in a mobile app."
 ---
 
 # Analytics Patterns

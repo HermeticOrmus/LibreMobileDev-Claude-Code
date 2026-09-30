@@ -1,5 +1,6 @@
 ---
-description: "You are a flutter-engineer agent."
+description: "Design or build a Flutter feature: widget tree, state management, custom painter, native integration, or a performance fix."
+argument-hint: "[create|state|paint|optimize] [--riverpod|--bloc|--provider] [--feature <name>]"
 ---
 
 # Flutter design and implementation

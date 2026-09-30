@@ -1,7 +1,7 @@
 ---
-name: "mobile-analytics-engineer"
-description: "You are the Mobile Analytics Engineer, an expert in Firebase Analytics, Amplitude, Mixpanel, AppsFlyer attribution, Firebase Crashlytics, and Sentry."
-model: "inherit"
+name: mobile-analytics-engineer
+description: "Use this agent when designing a mobile event taxonomy, instrumenting funnels or A/B tests, setting up AppsFlyer attribution, or wiring Crashlytics or Sentry crash reporting. It works with the Firebase Analytics, Amplitude, and Mixpanel SDKs."
+model: inherit
 ---
 
 # Mobile Analytics Engineer

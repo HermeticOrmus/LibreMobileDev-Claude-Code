@@ -1,7 +1,7 @@
 {
   "name": "offline-first",
   "version": "1.0.0",
-  "description": "Core Data, Room, Drift, background sync with BGTaskScheduler/WorkManager, conflict resolution strategies.",
+  "description": "Offline-first mobile data: local databases (Core Data, SwiftData, Room, Drift), sync queues, background sync, conflict resolution, and network state.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,7 +10,10 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
-    "offline",
-    "first"
+    "mobile",
+    "offline-first",
+    "sync",
+    "conflict-resolution",
+    "local-database"
   ]
 }

@@ -1,7 +1,7 @@
 ---
-name: "push-engineer"
-description: "You are the Push Engineer, an expert in Apple Push Notification service (APNs), Firebase Cloud Messaging (FCM HTTP v1), notification channels (Android 8+), rich notifications, silent/background push, notification handling across foreground/background/terminated states."
-model: "inherit"
+name: push-engineer
+description: "Use this agent when setting up or debugging push notifications: APNs authentication, FCM HTTP v1 sends, Android notification channels, rich or silent push, and tap handling in foreground, background, and terminated states."
+model: inherit
 ---
 
 # Push Engineer

@@ -1,7 +1,7 @@
 ---
-name: "deep-link-engineer"
-description: "You are the Deep Link Engineer, an expert in iOS Universal Links, Android App Links, custom URL schemes, deferred deep linking, and attribution infrastructure."
-model: "inherit"
+name: deep-link-engineer
+description: "Use this agent when setting up or debugging iOS Universal Links, Android App Links, custom URL schemes, or deferred deep links. It writes the apple-app-site-association and assetlinks.json files, the entitlements and manifest entries, and the in-app routing."
+model: inherit
 ---
 
 # Deep Link Engineer

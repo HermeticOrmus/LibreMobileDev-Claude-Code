@@ -1,6 +1,6 @@
 ---
-name: "deep-link-patterns"
-description: "Server requirements: - Served at exactly https://yourdomain.com/.well-known/apple-app-site-association - No redirect (Apple's crawler doesn't follow redirects) - Content-Type: application/json - No .json file extension"
+name: deep-link-patterns
+description: "Ready-to-adapt apple-app-site-association and assetlinks.json files, entitlements and intent filters, go_router deep links, Branch deferred links, and simulator and adb test commands. Use when configuring or testing Universal Links, App Links, or deferred deep links."
 ---
 
 # Deep Link Patterns

@@ -5,128 +5,128 @@
     "url": "https://github.com/HermeticOrmus"
   },
   "metadata": {
-    "description": "Mobile app development plugins for Claude Code",
+    "description": "Mobile app development for Claude Code: Flutter, React Native, native iOS and Android, and the performance, security, testing, CI/CD, and store layers around them.",
     "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "accessibility-mobile",
       "source": "./plugins/accessibility-mobile",
-      "description": "iOS VoiceOver, Android TalkBack, Flutter Semantics, WCAG 2.1 compliance for production mobile apps.",
+      "description": "Mobile accessibility for iOS, Android, and Flutter: VoiceOver, TalkBack, Flutter Semantics, Dynamic Type, touch targets, and WCAG 2.1 audits.",
       "version": "1.0.0"
     },
     {
       "name": "app-store-optimization",
       "source": "./plugins/app-store-optimization",
-      "description": "ASO, metadata, screenshots, A/B testing, ratings",
+      "description": "App Store and Google Play optimization: keyword fields, listing copy, screenshot sequences, store A/B tests, and rating prompts.",
       "version": "1.0.0"
     },
     {
       "name": "camera-media",
       "source": "./plugins/camera-media",
-      "description": "iOS AVFoundation, Android CameraX/Camera2, Flutter camera, ARKit/ARCore, image/video processing.",
+      "description": "Camera and media capture on iOS (AVFoundation), Android (CameraX, Camera2), and Flutter, including photo and video capture, frame processing, and ARKit or ARCore setup.",
       "version": "1.0.0"
     },
     {
       "name": "cross-platform-patterns",
       "source": "./plugins/cross-platform-patterns",
-      "description": "Flutter platform channels, Kotlin Multiplatform Mobile, React Native New Architecture, shared code architecture.",
+      "description": "Cross-platform mobile architecture: Flutter platform channels, Kotlin Multiplatform, React Native TurboModules, and the decision of what to share versus build natively.",
       "version": "1.0.0"
     },
     {
       "name": "deep-linking",
       "source": "./plugins/deep-linking",
-      "description": "iOS Universal Links, Android App Links, custom URL schemes, deferred deep linking, in-app routing.",
+      "description": "Deep linking for iOS Universal Links, Android App Links, custom URL schemes, deferred deep links, and in-app routing, with the server association files each needs.",
       "version": "1.0.0"
     },
     {
       "name": "flutter-development",
       "source": "./plugins/flutter-development",
-      "description": "Flutter 3.16+, Dart 3.x, all major platforms (iOS, Android, web, macOS, Windows, Linux).",
+      "description": "Flutter 3.x development: widget design, Riverpod and BLoC state management, pigeon platform channels, custom painting, isolates, and performance profiling.",
       "version": "1.0.0"
     },
     {
       "name": "gesture-interaction",
       "source": "./plugins/gesture-interaction",
-      "description": "UIGestureRecognizer, SwiftUI gestures, Android GestureDetector/MotionEvent, Flutter GestureDetector, haptic feedback, custom recognizers, velocity-based physics.",
+      "description": "Touch gestures and haptics on iOS, Android, and Flutter: standard and custom recognizers, gesture conflicts, velocity-driven fling physics, and haptic timing.",
       "version": "1.0.0"
     },
     {
       "name": "kotlin-android",
       "source": "./plugins/kotlin-android",
-      "description": "Kotlin coroutines, Jetpack Compose, ViewModel + StateFlow, Room, Hilt, WorkManager.",
+      "description": "Native Android with Kotlin: Jetpack Compose, ViewModel with StateFlow, coroutines and Flow, Room, Hilt, and WorkManager.",
       "version": "1.0.0"
     },
     {
       "name": "location-services",
       "source": "./plugins/location-services",
-      "description": "iOS CoreLocation, Android FusedLocationProvider, Flutter geolocator, geofencing, geocoding, MapKit/Google Maps/flutter_map.",
+      "description": "Location on iOS, Android, and Flutter: CoreLocation, FusedLocationProvider, geolocator, geofencing, geocoding, maps, and battery-aware accuracy choices.",
       "version": "1.0.0"
     },
     {
       "name": "mobile-analytics",
       "source": "./plugins/mobile-analytics",
-      "description": "Firebase Analytics, Amplitude, Mixpanel, AppsFlyer attribution, Crashlytics, Sentry — event taxonomy, funnels, crash reporting.",
+      "description": "Mobile analytics and crash reporting: event taxonomy, funnels, Firebase Analytics, Amplitude, Mixpanel, AppsFlyer attribution, Crashlytics, and Sentry.",
       "version": "1.0.0"
     },
     {
       "name": "mobile-architecture",
       "source": "./plugins/mobile-architecture",
-      "description": "Clean Architecture, MVVM, MVI, iOS Coordinator pattern, Android Navigation Component, feature modules, feature flags.",
+      "description": "Mobile app architecture: Clean Architecture layers, MVVM, MVI, repositories, iOS coordinators, Android Navigation, feature modules, and feature flags.",
       "version": "1.0.0"
     },
     {
       "name": "mobile-ci-cd",
       "source": "./plugins/mobile-ci-cd",
-      "description": "Fastlane, GitHub Actions, code signing (iOS match, Android keystore), TestFlight, Firebase App Distribution, Google Play.",
+      "description": "Mobile CI/CD: Fastlane lanes, GitHub Actions for iOS and Android, code signing with match and keystores, and TestFlight, Firebase App Distribution, and Google Play releases.",
       "version": "1.0.0"
     },
     {
       "name": "mobile-payments",
       "source": "./plugins/mobile-payments",
-      "description": "Apple StoreKit 2, Google Play Billing Library 6+, RevenueCat, Stripe, subscription lifecycle management.",
+      "description": "In-app purchases and subscriptions: StoreKit 2, Google Play Billing, RevenueCat, server-side receipt validation, restore flows, and subscription state.",
       "version": "1.0.0"
     },
     {
       "name": "mobile-performance",
       "source": "./plugins/mobile-performance",
-      "description": "iOS Instruments, Android Profiler, Flutter DevTools, launch time, memory management, rendering at 60/120fps.",
+      "description": "Mobile performance: profiling with Instruments, Android Profiler, and Flutter DevTools, launch time, memory, frame drops, list rendering, and battery.",
       "version": "1.0.0"
     },
     {
       "name": "mobile-security",
       "source": "./plugins/mobile-security",
-      "description": "iOS Keychain, Android Keystore, certificate pinning, biometric authentication, network security config, R8/ProGuard obfuscation.",
+      "description": "Mobile app security: Keychain and Keystore storage, certificate pinning, biometric authentication, network security config, R8 obfuscation, and a security anti-pattern review.",
       "version": "1.0.0"
     },
     {
       "name": "mobile-testing",
       "source": "./plugins/mobile-testing",
-      "description": "XCTest, XCUITest, Espresso, Compose testing, Flutter widget/integration tests, Detox, Firebase Test Lab, golden screenshot regression.",
+      "description": "Mobile testing: XCTest and XCUITest, Espresso and Compose tests, Flutter widget, golden, and integration tests, Detox, and Firebase Test Lab device runs.",
       "version": "1.0.0"
     },
     {
       "name": "offline-first",
       "source": "./plugins/offline-first",
-      "description": "Core Data, Room, Drift, background sync with BGTaskScheduler/WorkManager, conflict resolution strategies.",
+      "description": "Offline-first mobile data: local databases (Core Data, SwiftData, Room, Drift), sync queues, background sync, conflict resolution, and network state.",
       "version": "1.0.0"
     },
     {
       "name": "push-notifications",
       "source": "./plugins/push-notifications",
-      "description": "APNs JWT auth, FCM HTTP v1, Android notification channels (API 26+), rich notifications with UNNotificationServiceExtension, silent push, all-state handling (foreground/background/terminated).",
+      "description": "Push notifications: APNs token auth, FCM HTTP v1, Android notification channels, rich and silent push, and handling in foreground, background, and terminated states.",
       "version": "1.0.0"
     },
     {
       "name": "react-native",
       "source": "./plugins/react-native",
-      "description": "New Architecture (JSI/TurboModules/Fabric), Expo EAS, React Navigation, Reanimated 3, Zustand, TanStack Query, MMKV storage.",
+      "description": "React Native: the New Architecture (JSI, TurboModules, Fabric), Expo and EAS, React Navigation, Reanimated 3, Zustand, TanStack Query, and list performance.",
       "version": "1.0.0"
     },
     {
       "name": "swift-ios",
       "source": "./plugins/swift-ios",
-      "description": "Swift concurrency (async/await, actors, AsyncStream), SwiftUI (ViewBuilder, PreferenceKey, Layout protocol), UIViewRepresentable, Combine, SwiftData, Swift Package Manager, Swift macros.",
+      "description": "Native iOS with Swift: Swift concurrency, SwiftUI layout and navigation, UIKit interop, Combine, SwiftData, Swift Package Manager, and macros.",
       "version": "1.0.0"
     }
   ]

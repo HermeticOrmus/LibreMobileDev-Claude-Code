@@ -1,5 +1,6 @@
 ---
-description: "Implement push notification registration, handling, channels, rich content, and server-side sending."
+description: "Configure push registration, build server-side payloads, handle received notifications, or add rich notifications."
+argument-hint: "[configure|send|receive|rich] [--ios|--android|--flutter] [--silent] [--channel <name>]"
 ---
 
 # /push

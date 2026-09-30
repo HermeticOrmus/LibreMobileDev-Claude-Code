@@ -1,6 +1,6 @@
 ---
-name: "location-patterns"
-description: "Location Patterns"
+name: location-patterns
+description: "Location code for CoreLocation, FusedLocationProvider, geofencing and geocoding on both platforms, Flutter geolocator with flutter_map, and a battery impact comparison. Use when adding location tracking, geofences, or maps."
 ---
 
 # Location Patterns

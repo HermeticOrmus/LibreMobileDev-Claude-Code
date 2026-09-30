@@ -1,5 +1,6 @@
 ---
-description: "Implement secure storage, certificate pinning, biometric authentication, and code obfuscation."
+description: "Implement secure storage, certificate pinning, biometric auth, or release obfuscation, or audit code for mobile security flaws."
+argument-hint: "[keychain|pin|biometric|obfuscate|audit] [--ios|--android] [--strict]"
 ---
 
 # /mobile-sec

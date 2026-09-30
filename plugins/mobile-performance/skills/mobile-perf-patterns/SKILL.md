@@ -1,6 +1,6 @@
 ---
-name: "mobile-perf-patterns"
-description: "Frame drop symptoms: choppy scroll, animation stutter, \"jank\" feeling."
+name: mobile-perf-patterns
+description: "Performance fixes: iOS image downsampling and launch timing, Android StrictMode, DiffUtil, and Glide, Flutter rebuild detection, RepaintBoundary, and compute(), plus a frame budget reference. Use when fixing memory, launch, or rendering problems."
 ---
 
 # Mobile Performance Patterns

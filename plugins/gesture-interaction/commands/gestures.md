@@ -1,5 +1,6 @@
 ---
-description: "Implement gesture recognizers, haptic feedback, velocity tracking, and custom gesture recognizers."
+description: "Implement a standard or custom gesture, add haptic feedback, or produce a gesture test checklist for iOS, Android, or Flutter."
+argument-hint: "[detect|custom|haptic|test] [--ios|--android|--flutter] [--gesture <type>] [--velocity]"
 ---
 
 # /gestures

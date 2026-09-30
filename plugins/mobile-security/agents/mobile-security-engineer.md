@@ -1,7 +1,7 @@
 ---
-name: "mobile-security-engineer"
-description: "You are the Mobile Security Engineer, an expert in iOS Keychain Services, Android Keystore, certificate pinning, biometric authentication, secure data storage, traffic interception prevention, and code obfuscation."
-model: "inherit"
+name: mobile-security-engineer
+description: "Use this agent when storing secrets or tokens on a device, adding certificate pinning or biometric login, hardening network config, obfuscating a release build, or reviewing mobile code for security flaws. It covers iOS Keychain and Android Keystore with defense in depth."
+model: inherit
 ---
 
 # Mobile Security Engineer

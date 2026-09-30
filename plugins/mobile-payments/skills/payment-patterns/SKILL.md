@@ -1,6 +1,6 @@
 ---
-name: "payment-patterns"
-description: "Payment Patterns"
+name: payment-patterns
+description: "StoreKit 2 subscription flow and renewal state, Google Play Billing Library integration, and RevenueCat cross-platform subscriptions. Use when implementing in-app purchases or subscriptions."
 ---
 
 # Payment Patterns

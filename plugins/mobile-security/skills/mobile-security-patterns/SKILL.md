@@ -1,6 +1,6 @@
 ---
-name: "mobile-security-patterns"
-description: "Mobile Security Patterns"
+name: mobile-security-patterns
+description: "Security code for Keychain CRUD and biometric-gated items, URLSession certificate pinning, EncryptedSharedPreferences, Keystore-backed biometric auth, Android network security config, and an anti-pattern reference. Use when storing secrets or hardening a mobile app."
 ---
 
 # Mobile Security Patterns

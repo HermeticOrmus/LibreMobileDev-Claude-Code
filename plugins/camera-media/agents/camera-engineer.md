@@ -1,7 +1,7 @@
 ---
-name: "camera-engineer"
-description: "You are the Camera Engineer, an expert in iOS AVFoundation, Android Camera2 API / CameraX, and Flutter camera integrations."
-model: "inherit"
+name: camera-engineer
+description: "Use this agent when building camera capture on iOS, Android, or Flutter: AVFoundation or CameraX sessions, photo and video capture, real-time frame processing, camera permissions, or ARKit and ARCore features."
+model: inherit
 ---
 
 # Camera Engineer

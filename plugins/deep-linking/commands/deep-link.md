@@ -1,5 +1,6 @@
 ---
-description: "Configure Universal Links, App Links, custom schemes, routing, and deferred deep linking."
+description: "Configure, test, handle, or debug Universal Links, App Links, custom schemes, and deferred deep links."
+argument-hint: "[configure|test|handle|debug] [--ios|--android|--flutter] [--url <pattern>] [--deferred]"
 ---
 
 # /deep-link

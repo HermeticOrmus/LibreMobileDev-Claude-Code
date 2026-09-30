@@ -1,5 +1,6 @@
 ---
-description: "Configure location tracking, geofencing, geocoding, and maps integration."
+description: "Set up location tracking, geofencing, geocoding, or a map on iOS, Android, or Flutter."
+argument-hint: "[configure|track|geofence|map] [--ios|--android|--flutter] [--accuracy <tier>] [--background]"
 ---
 
 # /location

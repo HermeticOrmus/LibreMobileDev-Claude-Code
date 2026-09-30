@@ -1,6 +1,6 @@
 ---
-name: "flutter-development"
-description: "Pigeon for everything."
+name: flutter-development
+description: "Flutter pattern library: state management choices, const usage, a performance checklist, common failures, and full Riverpod, BLoC, CustomPainter, isolate, and rebuild-avoidance examples. Use when writing or reviewing Flutter code, picking state management, or chasing jank."
 ---
 
 # Flutter development pattern library

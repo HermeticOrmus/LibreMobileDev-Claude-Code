@@ -1,6 +1,6 @@
 ---
-name: "offline-first-patterns"
-description: "Offline First Patterns"
+name: offline-first-patterns
+description: "Offline-first code: Room with a sync queue and WorkManager worker, Core Data with background sync, Drift with a sync queue, a conflict resolution decision matrix, and a Flutter network monitor. Use when building local-first storage and sync."
 ---
 
 # Offline First Patterns

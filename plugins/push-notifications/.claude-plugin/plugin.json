@@ -1,7 +1,7 @@
 {
   "name": "push-notifications",
   "version": "1.0.0",
-  "description": "APNs JWT auth, FCM HTTP v1, Android notification channels (API 26+), rich notifications with UNNotificationServiceExtension, silent push, all-state handling (foreground/background/terminated).",
+  "description": "Push notifications: APNs token auth, FCM HTTP v1, Android notification channels, rich and silent push, and handling in foreground, background, and terminated states.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,7 +10,10 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
-    "push",
+    "mobile",
+    "push-notifications",
+    "apns",
+    "fcm",
     "notifications"
   ]
 }

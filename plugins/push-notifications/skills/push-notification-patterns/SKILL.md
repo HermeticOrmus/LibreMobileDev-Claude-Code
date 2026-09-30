@@ -1,6 +1,6 @@
 ---
-name: "push-notification-patterns"
-description: "Push Notification Patterns"
+name: push-notification-patterns
+description: "Push setup code for iOS registration and a rich notification service extension, Android FCM with notification channels and terminated-state taps, FCM HTTP v1 server payloads, and a state handling summary. Use when implementing or debugging push notifications."
 ---
 
 # Push Notification Patterns

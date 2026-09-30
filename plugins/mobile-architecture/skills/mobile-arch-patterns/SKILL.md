@@ -1,6 +1,6 @@
 ---
-name: "mobile-arch-patterns"
-description: "Mobile Architecture Patterns"
+name: mobile-arch-patterns
+description: "Architecture code: a Clean Architecture domain and data layer, the iOS Coordinator pattern, an MVI reducer, and Android Navigation with Safe Args. Use when structuring layers, navigation, or state flow in a mobile app."
 ---
 
 # Mobile Architecture Patterns

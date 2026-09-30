@@ -1,7 +1,7 @@
 {
   "name": "kotlin-android",
   "version": "1.0.0",
-  "description": "Kotlin coroutines, Jetpack Compose, ViewModel + StateFlow, Room, Hilt, WorkManager.",
+  "description": "Native Android with Kotlin: Jetpack Compose, ViewModel with StateFlow, coroutines and Flow, Room, Hilt, and WorkManager.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,7 +10,11 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
+    "mobile",
+    "android",
     "kotlin",
-    "android"
+    "jetpack-compose",
+    "room",
+    "hilt"
   ]
 }

@@ -1,5 +1,6 @@
 ---
-description: "Design shared code architecture, implement platform channels, evaluate KMM vs Flutter vs RN."
+description: "Design the shared versus native code split, write a platform channel or Kotlin Multiplatform expect/actual, or pick a cross-platform approach."
+argument-hint: "[design|channel|kmp|decide] [--flutter|--kmp|--rn] [--feature <name>]"
 ---
 
 # /cross-platform

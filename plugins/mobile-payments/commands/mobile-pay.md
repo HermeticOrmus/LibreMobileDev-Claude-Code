@@ -1,5 +1,6 @@
 ---
-description: "Implement IAP, subscriptions, purchase flows, receipt validation, and subscription state management."
+description: "Implement a purchase flow, receipt validation, purchase restore, or subscription state handling."
+argument-hint: "[purchase|validate|restore|subscription] [--ios|--android|--revenuecat] [--type <product>] [--feature <name>]"
 ---
 
 # /mobile-pay

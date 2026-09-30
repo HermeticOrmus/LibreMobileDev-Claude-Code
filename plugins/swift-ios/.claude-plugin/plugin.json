@@ -1,7 +1,7 @@
 {
   "name": "swift-ios",
   "version": "1.0.0",
-  "description": "Swift concurrency (async/await, actors, AsyncStream), SwiftUI (ViewBuilder, PreferenceKey, Layout protocol), UIViewRepresentable, Combine, SwiftData, Swift Package Manager, Swift macros.",
+  "description": "Native iOS with Swift: Swift concurrency, SwiftUI layout and navigation, UIKit interop, Combine, SwiftData, Swift Package Manager, and macros.",
   "author": {
     "name": "Diego Bodart",
     "url": "https://github.com/HermeticOrmus"
@@ -10,7 +10,11 @@
   "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
   "license": "MIT",
   "keywords": [
+    "mobile",
+    "ios",
     "swift",
-    "ios"
+    "swiftui",
+    "concurrency",
+    "swiftdata"
   ]
 }

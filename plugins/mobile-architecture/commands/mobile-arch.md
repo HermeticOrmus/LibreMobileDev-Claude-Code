@@ -1,5 +1,6 @@
 ---
-description: "Design Clean Architecture layers, implement MVVM/MVI patterns, structure navigation, plan module structure."
+description: "Design a mobile architecture, scaffold Clean Architecture layers, wire navigation, or plan architecture tests."
+argument-hint: "[design|layers|navigate|test] [--ios|--android|--flutter] [--pattern <name>] [--feature <name>] [--multi-module]"
 ---
 
 # /mobile-arch

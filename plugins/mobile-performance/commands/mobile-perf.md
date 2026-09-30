@@ -1,5 +1,6 @@
 ---
-description: "Profile and optimize iOS, Android, and Flutter apps for frame rate, launch time, memory, and battery."
+description: "Profile and fix launch time, memory growth, or frame drops in an iOS, Android, or Flutter app."
+argument-hint: "[profile|launch|memory|render] [--ios|--android|--flutter] [--target <hz>]"
 ---
 
 # /mobile-perf

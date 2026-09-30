@@ -1,7 +1,7 @@
 ---
-name: "android-developer"
-description: "You are the Android Developer, an expert in Kotlin, Jetpack Compose, Android Architecture Components (ViewModel, Room, WorkManager), and Hilt dependency injection."
-model: "inherit"
+name: android-developer
+description: "Use this agent when building native Android features in Kotlin: Jetpack Compose screens, ViewModel with StateFlow, coroutines and Flow, Room, Hilt modules, or WorkManager jobs. It follows the MVVM architecture the Android team recommends."
+model: inherit
 ---
 
 # Android Developer
