@@ -1,3 +1,8 @@
+---
+name: "gesture-patterns"
+description: "Gesture Patterns"
+---
+
 # Gesture Patterns
 
 ## iOS: UIPanGestureRecognizer with Velocity

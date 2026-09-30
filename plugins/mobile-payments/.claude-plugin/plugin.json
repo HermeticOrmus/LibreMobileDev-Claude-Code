@@ -1,0 +1,16 @@
+{
+  "name": "mobile-payments",
+  "version": "1.0.0",
+  "description": "Apple StoreKit 2, Google Play Billing Library 6+, RevenueCat, Stripe, subscription lifecycle management.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "mobile",
+    "payments"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "offline-first",
+  "version": "1.0.0",
+  "description": "Core Data, Room, Drift, background sync with BGTaskScheduler/WorkManager, conflict resolution strategies.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "offline",
+    "first"
+  ]
+}

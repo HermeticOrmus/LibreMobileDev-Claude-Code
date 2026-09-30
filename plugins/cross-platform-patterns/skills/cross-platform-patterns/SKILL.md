@@ -1,3 +1,8 @@
+---
+name: "cross-platform-patterns"
+description: "Cross Platform Patterns"
+---
+
 # Cross Platform Patterns
 
 ## Flutter MethodChannel

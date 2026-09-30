@@ -1,3 +1,8 @@
+---
+name: "kotlin-android-patterns"
+description: "Kotlin Android Patterns"
+---
+
 # Kotlin Android Patterns
 
 ## MVVM: ViewModel + StateFlow + Compose

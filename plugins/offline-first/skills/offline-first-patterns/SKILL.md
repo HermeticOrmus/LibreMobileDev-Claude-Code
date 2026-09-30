@@ -1,3 +1,8 @@
+---
+name: "offline-first-patterns"
+description: "Offline First Patterns"
+---
+
 # Offline First Patterns
 
 ## Android: Room with Sync Queue

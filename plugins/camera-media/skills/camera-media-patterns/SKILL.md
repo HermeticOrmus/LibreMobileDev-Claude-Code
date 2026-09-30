@@ -1,3 +1,8 @@
+---
+name: "camera-media-patterns"
+description: "Camera Media Patterns"
+---
+
 # Camera Media Patterns
 
 ## iOS: AVCaptureSession Setup

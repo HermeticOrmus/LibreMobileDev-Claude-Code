@@ -1,0 +1,16 @@
+{
+  "name": "mobile-testing",
+  "version": "1.0.0",
+  "description": "XCTest, XCUITest, Espresso, Compose testing, Flutter widget/integration tests, Detox, Firebase Test Lab, golden screenshot regression.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "mobile",
+    "testing"
+  ]
+}

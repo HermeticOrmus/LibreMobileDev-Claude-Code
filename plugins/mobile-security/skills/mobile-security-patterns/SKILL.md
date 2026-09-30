@@ -1,3 +1,8 @@
+---
+name: "mobile-security-patterns"
+description: "Mobile Security Patterns"
+---
+
 # Mobile Security Patterns
 
 ## iOS: Keychain CRUD

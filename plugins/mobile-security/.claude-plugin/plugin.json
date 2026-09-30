@@ -1,0 +1,16 @@
+{
+  "name": "mobile-security",
+  "version": "1.0.0",
+  "description": "iOS Keychain, Android Keystore, certificate pinning, biometric authentication, network security config, R8/ProGuard obfuscation.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "mobile",
+    "security"
+  ]
+}

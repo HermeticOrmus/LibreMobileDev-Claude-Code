@@ -1,0 +1,133 @@
+{
+  "name": "libre-mobiledev",
+  "owner": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "metadata": {
+    "description": "Mobile app development plugins for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "accessibility-mobile",
+      "source": "./plugins/accessibility-mobile",
+      "description": "iOS VoiceOver, Android TalkBack, Flutter Semantics, WCAG 2.1 compliance for production mobile apps.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "app-store-optimization",
+      "source": "./plugins/app-store-optimization",
+      "description": "ASO, metadata, screenshots, A/B testing, ratings",
+      "version": "1.0.0"
+    },
+    {
+      "name": "camera-media",
+      "source": "./plugins/camera-media",
+      "description": "iOS AVFoundation, Android CameraX/Camera2, Flutter camera, ARKit/ARCore, image/video processing.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "cross-platform-patterns",
+      "source": "./plugins/cross-platform-patterns",
+      "description": "Flutter platform channels, Kotlin Multiplatform Mobile, React Native New Architecture, shared code architecture.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "deep-linking",
+      "source": "./plugins/deep-linking",
+      "description": "iOS Universal Links, Android App Links, custom URL schemes, deferred deep linking, in-app routing.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "flutter-development",
+      "source": "./plugins/flutter-development",
+      "description": "Flutter 3.16+, Dart 3.x, all major platforms (iOS, Android, web, macOS, Windows, Linux).",
+      "version": "1.0.0"
+    },
+    {
+      "name": "gesture-interaction",
+      "source": "./plugins/gesture-interaction",
+      "description": "UIGestureRecognizer, SwiftUI gestures, Android GestureDetector/MotionEvent, Flutter GestureDetector, haptic feedback, custom recognizers, velocity-based physics.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "kotlin-android",
+      "source": "./plugins/kotlin-android",
+      "description": "Kotlin coroutines, Jetpack Compose, ViewModel + StateFlow, Room, Hilt, WorkManager.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "location-services",
+      "source": "./plugins/location-services",
+      "description": "iOS CoreLocation, Android FusedLocationProvider, Flutter geolocator, geofencing, geocoding, MapKit/Google Maps/flutter_map.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mobile-analytics",
+      "source": "./plugins/mobile-analytics",
+      "description": "Firebase Analytics, Amplitude, Mixpanel, AppsFlyer attribution, Crashlytics, Sentry — event taxonomy, funnels, crash reporting.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mobile-architecture",
+      "source": "./plugins/mobile-architecture",
+      "description": "Clean Architecture, MVVM, MVI, iOS Coordinator pattern, Android Navigation Component, feature modules, feature flags.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mobile-ci-cd",
+      "source": "./plugins/mobile-ci-cd",
+      "description": "Fastlane, GitHub Actions, code signing (iOS match, Android keystore), TestFlight, Firebase App Distribution, Google Play.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mobile-payments",
+      "source": "./plugins/mobile-payments",
+      "description": "Apple StoreKit 2, Google Play Billing Library 6+, RevenueCat, Stripe, subscription lifecycle management.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mobile-performance",
+      "source": "./plugins/mobile-performance",
+      "description": "iOS Instruments, Android Profiler, Flutter DevTools, launch time, memory management, rendering at 60/120fps.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mobile-security",
+      "source": "./plugins/mobile-security",
+      "description": "iOS Keychain, Android Keystore, certificate pinning, biometric authentication, network security config, R8/ProGuard obfuscation.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mobile-testing",
+      "source": "./plugins/mobile-testing",
+      "description": "XCTest, XCUITest, Espresso, Compose testing, Flutter widget/integration tests, Detox, Firebase Test Lab, golden screenshot regression.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "offline-first",
+      "source": "./plugins/offline-first",
+      "description": "Core Data, Room, Drift, background sync with BGTaskScheduler/WorkManager, conflict resolution strategies.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "push-notifications",
+      "source": "./plugins/push-notifications",
+      "description": "APNs JWT auth, FCM HTTP v1, Android notification channels (API 26+), rich notifications with UNNotificationServiceExtension, silent push, all-state handling (foreground/background/terminated).",
+      "version": "1.0.0"
+    },
+    {
+      "name": "react-native",
+      "source": "./plugins/react-native",
+      "description": "New Architecture (JSI/TurboModules/Fabric), Expo EAS, React Navigation, Reanimated 3, Zustand, TanStack Query, MMKV storage.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "swift-ios",
+      "source": "./plugins/swift-ios",
+      "description": "Swift concurrency (async/await, actors, AsyncStream), SwiftUI (ViewBuilder, PreferenceKey, Layout protocol), UIViewRepresentable, Combine, SwiftData, Swift Package Manager, Swift macros.",
+      "version": "1.0.0"
+    }
+  ]
+}

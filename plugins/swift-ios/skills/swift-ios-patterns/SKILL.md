@@ -1,3 +1,8 @@
+---
+name: "swift-ios-patterns"
+description: "Swift iOS Patterns"
+---
+
 # Swift iOS Patterns
 
 ## Swift Concurrency: Actor + AsyncStream

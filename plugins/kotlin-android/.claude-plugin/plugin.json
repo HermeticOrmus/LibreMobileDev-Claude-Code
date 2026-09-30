@@ -1,0 +1,16 @@
+{
+  "name": "kotlin-android",
+  "version": "1.0.0",
+  "description": "Kotlin coroutines, Jetpack Compose, ViewModel + StateFlow, Room, Hilt, WorkManager.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "kotlin",
+    "android"
+  ]
+}

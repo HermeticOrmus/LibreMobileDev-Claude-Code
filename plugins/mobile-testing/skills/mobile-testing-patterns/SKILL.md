@@ -1,3 +1,8 @@
+---
+name: "mobile-testing-patterns"
+description: "Run unit + widget tests on every PR."
+---
+
 # Mobile Testing Patterns
 
 ## iOS: XCTest Unit Test with Async/Await

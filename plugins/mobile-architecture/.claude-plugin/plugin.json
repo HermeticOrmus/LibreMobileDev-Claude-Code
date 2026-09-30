@@ -1,0 +1,16 @@
+{
+  "name": "mobile-architecture",
+  "version": "1.0.0",
+  "description": "Clean Architecture, MVVM, MVI, iOS Coordinator pattern, Android Navigation Component, feature modules, feature flags.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "mobile",
+    "architecture"
+  ]
+}

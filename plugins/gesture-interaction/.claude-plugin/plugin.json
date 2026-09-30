@@ -1,0 +1,16 @@
+{
+  "name": "gesture-interaction",
+  "version": "1.0.0",
+  "description": "UIGestureRecognizer, SwiftUI gestures, Android GestureDetector/MotionEvent, Flutter GestureDetector, haptic feedback, custom recognizers, velocity-based physics.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "gesture",
+    "interaction"
+  ]
+}

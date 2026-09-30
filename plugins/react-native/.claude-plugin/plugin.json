@@ -1,0 +1,16 @@
+{
+  "name": "react-native",
+  "version": "1.0.0",
+  "description": "New Architecture (JSI/TurboModules/Fabric), Expo EAS, React Navigation, Reanimated 3, Zustand, TanStack Query, MMKV storage.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "native"
+  ]
+}

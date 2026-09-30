@@ -1,3 +1,8 @@
+---
+name: "flutter-patterns"
+description: "Flutter Patterns"
+---
+
 # Flutter Patterns
 
 ## Riverpod: StateNotifierProvider

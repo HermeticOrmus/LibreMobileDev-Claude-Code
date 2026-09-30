@@ -1,0 +1,16 @@
+{
+  "name": "flutter-development",
+  "version": "1.0.0",
+  "description": "Flutter 3.16+, Dart 3.x, all major platforms (iOS, Android, web, macOS, Windows, Linux).",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "flutter",
+    "development"
+  ]
+}

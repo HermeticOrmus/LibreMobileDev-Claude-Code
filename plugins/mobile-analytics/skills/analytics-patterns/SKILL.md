@@ -1,3 +1,8 @@
+---
+name: "analytics-patterns"
+description: "Analytics Patterns"
+---
+
 # Analytics Patterns
 
 ## Analytics Service Abstraction

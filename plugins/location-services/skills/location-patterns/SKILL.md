@@ -1,3 +1,8 @@
+---
+name: "location-patterns"
+description: "Location Patterns"
+---
+
 # Location Patterns
 
 ## iOS: CoreLocation Setup

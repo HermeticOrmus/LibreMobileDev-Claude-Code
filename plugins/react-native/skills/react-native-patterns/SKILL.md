@@ -1,3 +1,8 @@
+---
+name: "react-native-patterns"
+description: "React Native Patterns"
+---
+
 # React Native Patterns
 
 ## Typed Navigation with React Navigation
