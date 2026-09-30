@@ -1,0 +1,160 @@
+{
+  "name": "libre-mobiledev",
+  "owner": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "metadata": {
+    "description": "Mobile app development for Claude Code: Flutter, React Native, native iOS and Android, and the performance, security, testing, CI/CD, and store layers around them.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "accessibility-mobile",
+      "description": "Mobile accessibility for iOS, Android, and Flutter: VoiceOver, TalkBack, Flutter Semantics, Dynamic Type, touch targets, and WCAG 2.1 audits.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/accessibility-mobile"
+    },
+    {
+      "name": "app-store-optimization",
+      "description": "App Store and Google Play optimization: keyword fields, listing copy, screenshot sequences, store A/B tests, and rating prompts.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/app-store-optimization"
+    },
+    {
+      "name": "camera-media",
+      "description": "Camera and media capture on iOS (AVFoundation), Android (CameraX, Camera2), and Flutter, including photo and video capture, frame processing, and ARKit or ARCore setup.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/camera-media"
+    },
+    {
+      "name": "cross-platform-patterns",
+      "description": "Cross-platform mobile architecture: Flutter platform channels, Kotlin Multiplatform, React Native TurboModules, and the decision of what to share versus build natively.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/cross-platform-patterns"
+    },
+    {
+      "name": "deep-linking",
+      "description": "Deep linking for iOS Universal Links, Android App Links, custom URL schemes, deferred deep links, and in-app routing, with the server association files each needs.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/deep-linking"
+    },
+    {
+      "name": "flutter-development",
+      "description": "Flutter 3.x development: widget design, Riverpod and BLoC state management, pigeon platform channels, custom painting, isolates, and performance profiling.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/flutter-development"
+    },
+    {
+      "name": "gesture-interaction",
+      "description": "Touch gestures and haptics on iOS, Android, and Flutter: standard and custom recognizers, gesture conflicts, velocity-driven fling physics, and haptic timing.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/gesture-interaction"
+    },
+    {
+      "name": "kotlin-android",
+      "description": "Native Android with Kotlin: Jetpack Compose, ViewModel with StateFlow, coroutines and Flow, Room, Hilt, and WorkManager.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/kotlin-android"
+    },
+    {
+      "name": "location-services",
+      "description": "Location on iOS, Android, and Flutter: CoreLocation, FusedLocationProvider, geolocator, geofencing, geocoding, maps, and battery-aware accuracy choices.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/location-services"
+    },
+    {
+      "name": "mobile-analytics",
+      "description": "Mobile analytics and crash reporting: event taxonomy, funnels, Firebase Analytics, Amplitude, Mixpanel, AppsFlyer attribution, Crashlytics, and Sentry.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/mobile-analytics"
+    },
+    {
+      "name": "mobile-architecture",
+      "description": "Mobile app architecture: Clean Architecture layers, MVVM, MVI, repositories, iOS coordinators, Android Navigation, feature modules, and feature flags.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/mobile-architecture"
+    },
+    {
+      "name": "mobile-ci-cd",
+      "description": "Mobile CI/CD: Fastlane lanes, GitHub Actions for iOS and Android, code signing with match and keystores, and TestFlight, Firebase App Distribution, and Google Play releases.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/mobile-ci-cd"
+    },
+    {
+      "name": "mobile-payments",
+      "description": "In-app purchases and subscriptions: StoreKit 2, Google Play Billing, RevenueCat, server-side receipt validation, restore flows, and subscription state.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/mobile-payments"
+    },
+    {
+      "name": "mobile-performance",
+      "description": "Mobile performance: profiling with Instruments, Android Profiler, and Flutter DevTools, launch time, memory, frame drops, list rendering, and battery.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/mobile-performance"
+    },
+    {
+      "name": "mobile-security",
+      "description": "Mobile app security: Keychain and Keystore storage, certificate pinning, biometric authentication, network security config, R8 obfuscation, and a security anti-pattern review.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/mobile-security"
+    },
+    {
+      "name": "mobile-testing",
+      "description": "Mobile testing: XCTest and XCUITest, Espresso and Compose tests, Flutter widget, golden, and integration tests, Detox, and Firebase Test Lab device runs.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/mobile-testing"
+    },
+    {
+      "name": "offline-first",
+      "description": "Offline-first mobile data: local databases (Core Data, SwiftData, Room, Drift), sync queues, background sync, conflict resolution, and network state.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/offline-first"
+    },
+    {
+      "name": "push-notifications",
+      "description": "Push notifications: APNs token auth, FCM HTTP v1, Android notification channels, rich and silent push, and handling in foreground, background, and terminated states.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/push-notifications"
+    },
+    {
+      "name": "react-native",
+      "description": "React Native: the New Architecture (JSI, TurboModules, Fabric), Expo and EAS, React Navigation, Reanimated 3, Zustand, TanStack Query, and list performance.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/react-native"
+    },
+    {
+      "name": "swift-ios",
+      "description": "Native iOS with Swift: Swift concurrency, SwiftUI layout and navigation, UIKit interop, Combine, SwiftData, Swift Package Manager, and macros.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/swift-ios"
+    },
+    {
+      "name": "libre-mobiledev-hooks",
+      "description": "Optional hooks for mobile projects: ask before touching signing keys, env files, or credentials and before destructive commands, warn on empty writes, and note the detected platforms at session start.",
+      "version": "1.0.0",
+      "category": "developer-tools",
+      "source": "./plugins/libre-mobiledev-hooks"
+    }
+  ]
+}
