@@ -1,6 +1,6 @@
 # libre-mobiledev-hooks
 
-> Optional safety and context hooks for mobile projects. Not installed by default.
+> Optional safety and context hooks for mobile projects. Install it on its own, or get it with a full `./setup.sh` run.
 
 ## What it does
 
