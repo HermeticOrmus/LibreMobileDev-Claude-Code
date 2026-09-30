@@ -26,47 +26,67 @@ Twenty plugins covering Flutter, React Native, native iOS (Swift/SwiftUI), nativ
 
 ### Frameworks
 
-| Plugin | Domain |
-|---|---|
-| **flutter-development** ⭐ | Flutter 3.x, widgets, state management, platform channels, build modes |
-| react-native | RN 0.7x+, new architecture (Fabric), navigation, native modules |
-| swift-ios | SwiftUI, UIKit, Combine, Core Data, App Intents |
-| kotlin-android | Jetpack Compose, Coroutines, Hilt, Room, Material 3 |
-| cross-platform-patterns | When to share code, when not to, common abstractions |
+| Plugin | Command | Domain |
+|---|---|---|
+| **flutter-development** ⭐ | `/flutter` | Flutter 3.x, widgets, state management, platform channels, build modes |
+| react-native | `/react-native` | RN 0.7x+, new architecture (Fabric), navigation, native modules |
+| swift-ios | `/ios` | SwiftUI, UIKit, Combine, Core Data, App Intents |
+| kotlin-android | `/android` | Jetpack Compose, Coroutines, Hilt, Room, Material 3 |
+| cross-platform-patterns | `/cross-platform` | When to share code, when not to, common abstractions |
 
 ### Performance + quality
 
-| Plugin | Domain |
-|---|---|
-| mobile-performance | Startup time, jank profiling, memory leaks, battery |
-| mobile-testing | Unit, widget, integration, E2E across platforms |
-| mobile-architecture | MVVM, BLoC, Riverpod, Redux, clean architecture |
-| accessibility-mobile | Screen readers, color contrast, gesture alternatives, dynamic type |
-| offline-first | Local-first storage, sync, conflict resolution |
+| Plugin | Command | Domain |
+|---|---|---|
+| mobile-performance | `/mobile-perf` | Startup time, jank profiling, memory leaks, battery |
+| mobile-testing | `/mobile-test` | Unit, widget, integration, E2E across platforms |
+| mobile-architecture | `/mobile-arch` | MVVM, BLoC, Riverpod, Redux, clean architecture |
+| accessibility-mobile | `/mobile-a11y` | Screen readers, color contrast, gesture alternatives, dynamic type |
+| offline-first | `/offline` | Local-first storage, sync, conflict resolution |
 
 ### Features + integrations
 
-| Plugin | Domain |
-|---|---|
-| push-notifications | FCM, APNs, deep linking from notification, rich notifications |
-| deep-linking | URL schemes, universal links / App Links, App Banner |
-| camera-media | Camera APIs, image picker, video recording, codecs |
-| location-services | GPS, geofencing, background location (with permission discipline) |
-| gesture-interaction | Touch, swipe, pinch, custom gesture recognizers |
-| mobile-payments | Apple Pay, Google Pay, IAP, third-party (Stripe SDKs) |
+| Plugin | Command | Domain |
+|---|---|---|
+| push-notifications | `/push` | FCM, APNs, deep linking from notification, rich notifications |
+| deep-linking | `/deep-link` | URL schemes, universal links / App Links, App Banner |
+| camera-media | `/camera` | Camera APIs, image picker, video recording, codecs |
+| location-services | `/location` | GPS, geofencing, background location (with permission discipline) |
+| gesture-interaction | `/gestures` | Touch, swipe, pinch, custom gesture recognizers |
+| mobile-payments | `/mobile-pay` | Apple Pay, Google Pay, IAP, third-party (Stripe SDKs) |
 
 ### Ops + distribution
 
-| Plugin | Domain |
-|---|---|
-| mobile-ci-cd | Fastlane, Codemagic, Bitrise, GitHub Actions for mobile, code signing |
-| app-store-optimization | Keyword research, screenshots, store reviews, ratings management |
-| mobile-analytics | Mixpanel, Amplitude, Firebase Analytics, privacy-respecting alternatives |
-| mobile-security | Cert pinning, keychain/keystore, jailbreak/root detection, OWASP Mobile Top 10 |
+| Plugin | Command | Domain |
+|---|---|---|
+| mobile-ci-cd | `/mobile-cicd` | Fastlane, Codemagic, Bitrise, GitHub Actions for mobile, code signing |
+| app-store-optimization | `/aso` | Keyword research, screenshots, store reviews, ratings management |
+| mobile-analytics | `/mobile-analytics` | Mixpanel, Amplitude, Firebase Analytics, privacy-respecting alternatives |
+| mobile-security | `/mobile-sec` | Cert pinning, keychain/keystore, jailbreak/root detection, OWASP Mobile Top 10 |
 
 ⭐ = depth-complete. Remaining 19 shell-improved.
 
+Each plugin ships one agent, one slash command, and one skill: 20 agents, 20 commands, and 20 skills in all. An optional 21st plugin, `libre-mobiledev-hooks`, adds safety and context hooks (see [below](#optional-hooks)).
+
 ## Quick start
+
+### Install from Claude Code
+
+```
+/plugin marketplace add HermeticOrmus/LibreMobileDev-Claude-Code
+/plugin install flutter-development@libre-mobiledev
+```
+
+Install any other plugin the same way, by the name in the tables above: `/plugin install <plugin>@libre-mobiledev`. From a terminal, the same thing is:
+
+```bash
+claude plugin marketplace add HermeticOrmus/LibreMobileDev-Claude-Code
+claude plugin install flutter-development@libre-mobiledev
+```
+
+### Install everything with setup.sh
+
+`setup.sh` registers your clone as the `libre-mobiledev` marketplace and installs every plugin through the Claude Code CLI. `./setup.sh --list` shows the plugins, `./setup.sh --only flutter-development,mobile-ci-cd` installs a subset, and `./setup.sh --uninstall` removes them. It needs `claude` and `jq` on your `PATH`.
 
 ```bash
 git clone https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code.git ~/projects/LibreMobileDev-Claude-Code
@@ -80,6 +100,14 @@ cd ~/projects/LibreMobileDev-Claude-Code
 
 See [QUICK_START.md](QUICK_START.md).
 
+### Optional hooks
+
+```
+/plugin install libre-mobiledev-hooks@libre-mobiledev
+```
+
+`libre-mobiledev-hooks` asks before Claude reads or writes signing keys, keystores, `key.properties`, `.p8` keys, provisioning profiles, `.env` files, credentials, or Firebase config, and before destructive commands such as `rm -rf`, `git push --force`, or `fastlane match nuke`. It also warns when a write leaves a file empty, reminds Claude once per session to run tests after changing mobile source, and names the detected platforms (Flutter, React Native, iOS, Android) at session start. It needs `jq`. A full `./setup.sh` run installs it; `--only` leaves it out unless you name it. Details: [plugins/libre-mobiledev-hooks](plugins/libre-mobiledev-hooks/README.md).
+
 ## Learning paths
 
 - [Beginner](learning-paths/beginner.md) — mobile mindset, your first deployed app
@@ -89,6 +117,14 @@ See [QUICK_START.md](QUICK_START.md).
 ## Disclaimer
 
 Building mobile apps for regulated domains has compliance requirements this kit doesn't replace (HIPAA, COPPA, GDPR consent). App Store + Play Store reviews enforce additional policies (privacy nutrition labels, ATT prompts, data safety section).
+
+## Feedback
+
+Starred this? Tell us what worked and what is missing: [open a feedback issue](https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code/issues/new?template=feedback.yml). Every piece of feedback gets an answer, and changes that come from it are credited in the release notes.
+
+## Contributing
+
+PRs welcome for plugin depth, framework variations, and store-specific patterns. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

@@ -1,5 +1,14 @@
 # Quick start
 
+Inside Claude Code:
+
+```
+/plugin marketplace add HermeticOrmus/LibreMobileDev-Claude-Code
+/plugin install flutter-development@libre-mobiledev
+```
+
+Or clone and install every plugin through the Claude Code CLI:
+
 ```bash
 git clone https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code.git ~/projects/LibreMobileDev-Claude-Code
 cd ~/projects/LibreMobileDev-Claude-Code
