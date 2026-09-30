@@ -33,7 +33,7 @@ The pack is English only. If you want to translate the README, QUICK_START or a 
 
 ### Share what you built
 
-Built an app, a flow or a plugin with this pack? Share it in [Discussions](https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code/discussions) under Show and tell if they are enabled on this repo, or in a [feedback issue](https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code/issues/new?template=feedback.yml). Real shipped-app stories are how the Menu learns what to build next.
+Built an app, a flow or a plugin with this pack? Share it in [Discussions](https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code/discussions/categories/show-and-tell) under Show and tell.com/HermeticOrmus/LibreMobileDev-Claude-Code/issues/new?template=feedback.yml). Real shipped-app stories are how the Menu learns what to build next.
 
 ### Test your change locally
 
