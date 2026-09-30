@@ -1,3 +1,8 @@
+---
+name: "aso-patterns"
+description: "Character count: 93 — leaves room to swap underperformers after ranking data accumulates."
+---
+
 # ASO Patterns
 
 ## iOS Keyword Field Optimization

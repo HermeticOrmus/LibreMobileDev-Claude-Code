@@ -1,0 +1,16 @@
+{
+  "name": "camera-media",
+  "version": "1.0.0",
+  "description": "iOS AVFoundation, Android CameraX/Camera2, Flutter camera, ARKit/ARCore, image/video processing.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "camera",
+    "media"
+  ]
+}

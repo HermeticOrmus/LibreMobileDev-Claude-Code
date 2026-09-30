@@ -1,3 +1,8 @@
+---
+name: "payment-patterns"
+description: "Payment Patterns"
+---
+
 # Payment Patterns
 
 ## iOS StoreKit 2: Complete Subscription Flow

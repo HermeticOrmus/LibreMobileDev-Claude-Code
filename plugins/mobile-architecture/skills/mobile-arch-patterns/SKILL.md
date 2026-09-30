@@ -1,3 +1,8 @@
+---
+name: "mobile-arch-patterns"
+description: "Mobile Architecture Patterns"
+---
+
 # Mobile Architecture Patterns
 
 ## Clean Architecture: Domain Layer (Shared Interface)

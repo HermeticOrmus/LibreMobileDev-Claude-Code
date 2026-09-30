@@ -1,3 +1,8 @@
+---
+name: "push-notification-patterns"
+description: "Push Notification Patterns"
+---
+
 # Push Notification Patterns
 
 ## iOS: Full Push Setup

@@ -1,3 +1,8 @@
+---
+name: "mobile-perf-patterns"
+description: "Frame drop symptoms: choppy scroll, animation stutter, \"jank\" feeling."
+---
+
 # Mobile Performance Patterns
 
 ## iOS: Image Downsampling (Memory Win)

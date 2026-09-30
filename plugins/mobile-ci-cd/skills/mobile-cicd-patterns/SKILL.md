@@ -1,3 +1,8 @@
+---
+name: "mobile-cicd-patterns"
+description: "Mobile CI/CD Patterns"
+---
+
 # Mobile CI/CD Patterns
 
 ## Fastfile: iOS Distribution Lane

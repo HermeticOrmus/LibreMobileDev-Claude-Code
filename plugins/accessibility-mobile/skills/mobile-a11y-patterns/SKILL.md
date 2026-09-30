@@ -1,3 +1,8 @@
+---
+name: "mobile-a11y-patterns"
+description: "Add transparent padding when visual size must remain small:"
+---
+
 # Mobile A11y Patterns
 
 ## iOS Accessibility

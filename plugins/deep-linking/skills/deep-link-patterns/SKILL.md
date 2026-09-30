@@ -1,3 +1,8 @@
+---
+name: "deep-link-patterns"
+description: "Server requirements: - Served at exactly https://yourdomain.com/.well-known/apple-app-site-association - No redirect (Apple's crawler doesn't follow redirects) - Content-Type: application/json - No .json file extension"
+---
+
 # Deep Link Patterns
 
 ## apple-app-site-association (AASA)

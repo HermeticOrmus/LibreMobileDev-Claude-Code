@@ -1,0 +1,16 @@
+{
+  "name": "deep-linking",
+  "version": "1.0.0",
+  "description": "iOS Universal Links, Android App Links, custom URL schemes, deferred deep linking, in-app routing.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "deep",
+    "linking"
+  ]
+}
