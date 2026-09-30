@@ -19,7 +19,7 @@ cd ~/projects/LibreMobileDev-Claude-Code
 
 ```bash
 grok plugin marketplace add HermeticOrmus/LibreMobileDev-Claude-Code
-grok plugin install flutter-development@libre-mobiledev --trust
+grok plugin install flutter-development@LibreMobileDev-Claude-Code --trust
 ```
 
 Or one plugin straight from its folder: `grok plugin install HermeticOrmus/LibreMobileDev-Claude-Code#plugins/flutter-development --trust`. From a clone, `./setup.sh --grok` installs every plugin into Grok Build. `libre-mobiledev-hooks` uses a hook format Grok Build supports, but it has not been verified in a live Grok session yet.
