@@ -128,6 +128,12 @@
       "source": "./plugins/swift-ios",
       "description": "Native iOS with Swift: Swift concurrency, SwiftUI layout and navigation, UIKit interop, Combine, SwiftData, Swift Package Manager, and macros.",
       "version": "1.0.0"
+    },
+    {
+      "name": "libre-mobiledev-hooks",
+      "source": "./plugins/libre-mobiledev-hooks",
+      "description": "Optional hooks for mobile projects: ask before touching signing keys, env files, or credentials and before destructive commands, warn on empty writes, and note the detected platforms at session start.",
+      "version": "1.0.0"
     }
   ]
 }

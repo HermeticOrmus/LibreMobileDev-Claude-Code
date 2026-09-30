@@ -1,0 +1,19 @@
+{
+  "name": "libre-mobiledev-hooks",
+  "version": "1.0.0",
+  "description": "Optional hooks for mobile projects: ask before touching signing keys, env files, or credentials and before destructive commands, warn on empty writes, and note the detected platforms at session start.",
+  "author": {
+    "name": "Diego Bodart",
+    "url": "https://github.com/HermeticOrmus"
+  },
+  "homepage": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "repository": "https://github.com/HermeticOrmus/LibreMobileDev-Claude-Code",
+  "license": "MIT",
+  "keywords": [
+    "mobile",
+    "hooks",
+    "safety",
+    "secrets",
+    "code-signing"
+  ]
+}
