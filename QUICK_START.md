@@ -15,6 +15,17 @@ cd ~/projects/LibreMobileDev-Claude-Code
 ./setup.sh
 ```
 
+### Install in Grok Build
+
+```bash
+grok plugin marketplace add HermeticOrmus/LibreMobileDev-Claude-Code
+grok plugin install flutter-development@libre-mobiledev --trust
+```
+
+Or one plugin straight from its folder: `grok plugin install HermeticOrmus/LibreMobileDev-Claude-Code#plugins/flutter-development --trust`. From a clone, `./setup.sh --grok` installs every plugin into Grok Build. `libre-mobiledev-hooks` uses a hook format Grok Build supports, but it has not been verified in a live Grok session yet.
+
+Then ask:
+
 ```
 /flutter design a state management strategy for an app with offline-first reads, conflict resolution on sync, deep links from push notifications. Riverpod or BLoC?
 ```
