@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Mobile app development for Claude Code: Flutter, React Native, native iOS and Android, and the performance, security, testing, CI/CD, and store layers around them.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
